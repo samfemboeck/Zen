@@ -1,0 +1,72 @@
+{
+  "runtimeTarget": {
+    "name": ".NETStandard,Version=v2.0/",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETStandard,Version=v2.0": {},
+    ".NETStandard,Version=v2.0/": {
+      "Zen/1.0.0": {
+        "dependencies": {
+          "MonoGame.Content.Builder": "3.7.0.9",
+          "MonoGame.Framework.DesktopGL.Core": "3.8.0.13",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "Zen.dll": {}
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "MonoGame.Content.Builder/3.7.0.9": {},
+      "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
+        "runtime": {
+          "lib/netstandard2.0/MonoGame.Framework.dll": {
+            "assemblyVersion": "3.8.0.13",
+            "fileVersion": "3.8.0.13"
+          }
+        }
+      },
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Zen/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "MonoGame.Content.Builder/3.7.0.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AAt9ns5w6c9JkZFC2UC+nB8v+kTDgRP1ONaB5lLSfzBhrGULUoNwMxiRAzi7GlPVj5yynu3PHNi8kZTOUIdF9g==",
+      "path": "monogame.content.builder/3.7.0.9",
+      "hashPath": "monogame.content.builder.3.7.0.9.nupkg.sha512"
+    },
+    "MonoGame.Framework.DesktopGL.Core/3.8.0.13": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-cMsc/UZFS8Uk/a1RDc8OZ9Z2EXrEglWGcZGSvPJiWEcUC5Oo9K9uoZXaprvesM3YbyT1ItzqS4jXjTDR4qT4WA==",
+      "path": "monogame.framework.desktopgl.core/3.8.0.13",
+      "hashPath": "monogame.framework.desktopgl.core.3.8.0.13.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
+    }
+  }
+}
