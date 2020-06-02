@@ -53,10 +53,7 @@ namespace Zen.EC
 		{
 			_sourceRect = sprite.SourceRect;
 
-			Material = new Material
-			{
-				SamplerState = SamplerState.LinearWrap
-			};
+			Material = Material.LinearWrap;
 		}
 
 		public TiledSpriteRenderer(Texture2D texture) : this(new Sprite(texture))

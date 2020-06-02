@@ -2,17 +2,18 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Zen.EC;
+using Zen.Util;
 
 namespace Zen
 {
-    public class Core : Game
+    public abstract class Core : Game
     {
-        public static new GraphicsDevice GraphicsDevice;
+        public new static GraphicsDevice GraphicsDevice;
         public SpriteBatch SpriteBatch;
-        GraphicsDeviceManager _graphicsManager;
-        Machine _machine;
+        private Machine _machine;
+        private TimerManager _timerManager = new TimerManager();
 
-        public Machine Machine
+        protected Machine Machine
         {
             get => _machine;
             set
@@ -23,19 +24,19 @@ namespace Zen
             }
         }
 
-        public Core(int width = 1920, int height = 1080, bool isFullScreen = false)
+        protected Core(int width = 1920, int height = 1080, bool isFullScreen = false)
         {
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
-            _graphicsManager = new GraphicsDeviceManager(this)
+            var graphicsDeviceManager = new GraphicsDeviceManager(this)
 			{
 				PreferredBackBufferWidth = width,
 				PreferredBackBufferHeight = height,
 				IsFullScreen = isFullScreen
 			};
 
-            Screen.Initialize(_graphicsManager);
+            Screen.Initialize(graphicsDeviceManager);
         }
 
         protected override void Initialize()
@@ -54,6 +55,11 @@ namespace Zen
                 Exit();
 
             Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+            
+            _timerManager.Update();
+            
+            Input.Update();
+            
             Machine.Update();
 
             base.Update(gameTime);

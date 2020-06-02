@@ -8,23 +8,13 @@ namespace Zen
 {
     public class Machine
     {
-        HashSet<Entity> _entities = new HashSet<Entity>();
-        HashSet<Entity> _entitiesToAdd = new HashSet<Entity>();
-        HashSet<Entity> _entitiesToRemove = new HashSet<Entity>();
-        List<IDrawable> _drawables = new List<IDrawable>();
-        List<IUpdatable> _updatables = new List<IUpdatable>();
-        SpriteBatch _spriteBatch;
-        Renderer _renderer;
-
-        public Renderer Renderer
-        {
-            get => _renderer;
-            set
-            {
-                _renderer = value;
-                _renderer.SpriteBatch = _spriteBatch;
-            }
-        }
+        private readonly HashSet<Entity> _entities = new HashSet<Entity>();
+        private readonly HashSet<Entity> _entitiesToAdd = new HashSet<Entity>();
+        private readonly HashSet<Entity> _entitiesToRemove = new HashSet<Entity>();
+        private readonly List<IDrawable> _drawables = new List<IDrawable>();
+        private readonly List<IUpdatable> _updatables = new List<IUpdatable>();
+        private SpriteBatch _spriteBatch;
+        private Renderer _renderer;
 
         public ContentManager Content;
 
@@ -33,7 +23,7 @@ namespace Zen
 
             if (_entitiesToRemove.Count > 0)
             {
-                foreach (Entity entity in _entitiesToRemove)
+                foreach (var entity in _entitiesToRemove)
                 {
                     _entities.Remove(entity);
                     entity.OnDestroy();
@@ -63,9 +53,7 @@ namespace Zen
         public void Init(Core core)
         {
             _spriteBatch = core.SpriteBatch;
-
-            if (_renderer == null)
-                Renderer = new Renderer();
+            _renderer = new Renderer(_spriteBatch);
 
             LoadContent(core.Content);
             OnContentLoaded();
@@ -73,13 +61,12 @@ namespace Zen
 
         public void Draw()
         {
-            if (!Renderer.BeginCalled)
-                Renderer.Begin();
+            _renderer.Begin();
 
-            foreach (IDrawable drawable in _drawables)
-                Renderer.Draw(drawable);
+            foreach (var drawable in _drawables)
+                _renderer.Draw(drawable);
 
-            Renderer.End();
+            _renderer.End();
         }
 
         public void AddEntity(Entity entity)
@@ -89,18 +76,18 @@ namespace Zen
 
         public void RegisterComponent(Component component)
         {
-            if (component is IUpdatable)
-                _updatables.Add(component as IUpdatable);
-            if (component is IDrawable)
-                _drawables.Add(component as IDrawable);
+            if (component is IUpdatable updatable)
+                _updatables.Add(updatable);
+            if (component is IDrawable drawable)
+                _drawables.Add(drawable);
         }
 
         public void UnRegisterComponent(Component component)
         {
-            if (component is IUpdatable)
-                _updatables.Remove(component as IUpdatable);
-            if (component is IDrawable)
-                _drawables.Remove(component as IDrawable);
+            if (component is IUpdatable updatable)
+                _updatables.Remove(updatable);
+            if (component is IDrawable drawable)
+                _drawables.Remove(drawable);
         }
 
         public void RemoveEntity(Entity entity)
@@ -108,8 +95,8 @@ namespace Zen
             _entitiesToRemove.Add(entity);
         }
 
-        public virtual void LoadContent(ContentManager content) { }
+        protected virtual void LoadContent(ContentManager content) { }
 
-        public virtual void OnContentLoaded() { }
+        protected virtual void OnContentLoaded() { }
     }
 }

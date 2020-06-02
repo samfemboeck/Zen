@@ -58,6 +58,13 @@ namespace Zen.EC
             _componentsToAdd.Add(component);
         }
 
+        public T AddComponent<T>() where T : Component, new()
+        {
+            var component = new T();
+            _componentsToAdd.Add(component);
+            return component;
+        }
+
         public void RemoveComponent(Component component)
         {
             _componentsToRemove.Add(component);

@@ -6,42 +6,45 @@
 
 using System;
 using Zen;
+using Zen.Util;
 
-public class Timer
+namespace Zen.Util
 {
-    public event Action onFinish;
-    float _interval;
-    float _elapsed;
-    bool _destroyed;
-    bool _isRepeating;
-
-    public Timer(float interval, bool isRepeating, Action callBack)
+    public class Timer
     {
-        this._interval = interval;
-        onFinish = callBack;
-        _isRepeating = isRepeating;
-        TimerManager.Add(this);
-    }
+        public event Action OnFinish;
+        private readonly float _interval;
+        private readonly bool _isRepeating;
+        private float _elapsedTime;
+        private bool _isDestroyed;
 
-    public void Update()
-    {
-        if (_destroyed) return;
-        _elapsed += Time.DeltaTime;
-
-        if (_elapsed >= _interval)
+        public Timer(float interval, bool isRepeating, Action callBack)
         {
-            onFinish?.Invoke();
+            _interval = interval;
+            OnFinish = callBack;
+            _isRepeating = isRepeating;
+            TimerManager.Add(this);
+        }
+
+        public void Update()
+        {
+            if (_isDestroyed) return;
+            _elapsedTime += Time.DeltaTime;
+
+            if (!(_elapsedTime >= _interval)) return;
+            
+            OnFinish?.Invoke();
             
             if (_isRepeating)
-                _elapsed = 0;
+                _elapsedTime = 0;
             else
                 Destroy();
         }
-    }
 
-    public void Destroy()
-    {
-        _destroyed = true;
-        TimerManager.Remove(this);
+        public void Destroy()
+        {
+            _isDestroyed = true;
+            TimerManager.Remove(this);
+        }
     }
 }

@@ -1,29 +1,26 @@
-﻿/*
-    Studiengang MultimediaTechnology, FH Salzburg
-    Multimediaprojekt 1
-    Author: Samuel Femböck
-*/
+﻿using System.Collections.Generic;
 
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-
-public class TimerManager : GameComponent
+namespace Zen.Util
 {
-    List<Timer> toRemove = new List<Timer>();
-    List<Timer> timers = new List<Timer>();
-    public static TimerManager Instance;
-
-    public TimerManager(Game game) : base(game)
+    public class TimerManager
     {
-        Instance = this;
-    }
+        private readonly List<Timer> _toRemove = new List<Timer>();
+        private readonly List<Timer> _timers = new List<Timer>();
+        public static TimerManager Instance;
 
-    public static void Add(Timer Timer) { Instance.timers.Add(Timer); }
-    public static void Remove(Timer Timer) { Instance.timers.Remove(Timer); }
+        public TimerManager()
+        {
+            Instance = this;
+        }
 
-    public override void Update(GameTime gametime)
-    {
-        for (int i = timers.Count - 1; i >= 0; i--)
-            timers[i].Update();
+        public static void Add(Timer timer) { Instance._timers.Add(timer); }
+        public static void Remove(Timer timer) { Instance._timers.Remove(timer); }
+
+        public void Update()
+        {
+            for (var i = _timers.Count - 1; i >= 0; i--)
+                _timers[i].Update();
+        }
     }
 }
+

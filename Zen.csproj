@@ -28,10 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.8.*" />
     <PackageReference Include="MonoGame.Content.Builder" Version="3.7.*" />
   </ItemGroup>

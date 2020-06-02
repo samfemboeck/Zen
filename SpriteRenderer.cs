@@ -17,7 +17,7 @@ namespace Zen.EC
 			set => SetSprite(value);
 		}
 
-        public Material Material { get; set; } = new Material();
+        public Material Material { get; set; } = Material.Default;
 
         public SpriteRenderer()
 		{ }

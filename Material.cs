@@ -2,29 +2,26 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Zen.Graphics
 {
-    public struct Material
+    public class Material
     {
+        public static Material Default = new Material();
+        public static Material LinearWrap = new Material(SamplerState.LinearWrap);
+        
         public SamplerState SamplerState;
+        public DepthStencilState DepthStencilState;
+        public BlendState BlendState;
+        public RasterizerState RasterizerState;
 
-        public static bool operator ==(Material m1, Material m2)
+        public Material(
+            SamplerState samplerState = null, 
+            DepthStencilState depthStencilState = null, 
+            BlendState blendState = null, 
+            RasterizerState rasterizerState = null)
         {
-            return m1.Equals(m2);
-        }
-
-        public static bool operator !=(Material m1, Material m2)
-        {
-            return !m1.Equals(m2);
-        }
-
-        public override bool Equals(object other)
-        {
-            if (other == null || GetType() != other.GetType())
-            {
-                return false;
-            }
-
-            Material compare = (Material)other;
-            return compare.SamplerState == SamplerState;
+            SamplerState = samplerState;
+            DepthStencilState = depthStencilState;
+            BlendState = blendState;
+            RasterizerState = rasterizerState;
         }
     }
 }

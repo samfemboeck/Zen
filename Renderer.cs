@@ -2,18 +2,21 @@ using Microsoft.Xna.Framework.Graphics;
 using Zen.EC;
 using Zen.Graphics;
 
-namespace Zen.Graphics
+namespace Zen
 {
     public class Renderer
     {
-        public bool BeginCalled = false;
-        public SpriteBatch SpriteBatch;
-        Material _curMaterial;
+        private readonly SpriteBatch _spriteBatch;
+        private Material _curMaterial = Material.Default;
+
+        public Renderer(SpriteBatch spriteBatch)
+        {
+            _spriteBatch = spriteBatch;
+        }
 
         public void Begin()
         {
-            SpriteBatch.Begin();
-            BeginCalled = true;
+            _spriteBatch.Begin(samplerState: _curMaterial.SamplerState, blendState: _curMaterial.BlendState, rasterizerState: _curMaterial.RasterizerState, depthStencilState: _curMaterial.DepthStencilState);
         }
         
         public void Draw(IDrawable drawable)
@@ -21,22 +24,16 @@ namespace Zen.Graphics
             if (drawable.Material != _curMaterial)
             {
                 _curMaterial = drawable.Material;
-                Flush();
+                End();
+                Begin();
             }
 
-            drawable.Draw(SpriteBatch);
-        }
-
-        public void Flush()
-        {
-            SpriteBatch.End();
-            SpriteBatch.Begin(samplerState: _curMaterial.SamplerState);
+            drawable.Draw(_spriteBatch);
         }
 
         public void End()
         {
-            SpriteBatch.End();
-            BeginCalled = false;
+            _spriteBatch.End();
         }
     }
 }
