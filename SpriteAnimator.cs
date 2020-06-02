@@ -146,6 +146,9 @@ public class SpriteAnimator : SpriteRenderer, IUpdatable
     {
         for (var i = 0; i < atlas.AnimationNames.Length; i++)
             _animations.Add(atlas.AnimationNames[i], atlas.SpriteAnimations[i]);
+
+        // Set first Sprite from atlas just in case :)
+        SetSprite(atlas.SpriteAnimations[0].Sprites[0]);
         return this;
     }
 

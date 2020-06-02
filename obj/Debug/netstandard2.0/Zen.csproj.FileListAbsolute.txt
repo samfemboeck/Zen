@@ -1,9 +1,0 @@
-C:\Users\sammy\repos\Zen\obj\Debug\netstandard2.0\Zen.csprojAssemblyReference.cache
-C:\Users\sammy\repos\Zen\obj\Debug\netstandard2.0\Zen.AssemblyInfoInputs.cache
-C:\Users\sammy\repos\Zen\obj\Debug\netstandard2.0\Zen.AssemblyInfo.cs
-C:\Users\sammy\repos\Zen\obj\Debug\netstandard2.0\Zen.csproj.CoreCompileInputs.cache
-C:\Users\sammy\repos\Zen\bin\Debug\netstandard2.0\Zen.deps.json
-C:\Users\sammy\repos\Zen\bin\Debug\netstandard2.0\Zen.dll
-C:\Users\sammy\repos\Zen\bin\Debug\netstandard2.0\Zen.pdb
-C:\Users\sammy\repos\Zen\obj\Debug\netstandard2.0\Zen.dll
-C:\Users\sammy\repos\Zen\obj\Debug\netstandard2.0\Zen.pdb

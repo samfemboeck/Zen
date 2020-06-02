@@ -65,48 +65,5 @@ namespace Zen.Textures
                 }
             }
         }
-
-        /// <summary>
-        /// processes each pixel of the passed in Texture and in the output texture transparent pixels will be transparentColor and opaque pixels
-        /// will be opaqueColor. This is useful for creating normal maps for rim lighting by applying a grayscale blur then using createNormalMap*
-        /// by doing something like the following. The first step is used only for making rim lighting normal maps:
-        /// - var maskTex = createFlatHeightmap( tex, Color.White, Color.Black )
-        /// - var blurredTex = createBlurredGrayscaleTexture( maskTex, 1 )
-        /// - createNormalMap( blurredTex, 50f )
-        /// </summary>
-        /// <returns>The flat heightmap.</returns>
-        /// <param name="image">Image.</param>
-        /// <param name="opaqueColor">Opaque color.</param>
-        /// <param name="transparentColor">Transparent color.</param>
-        public static Texture2D CreateFlatHeightmap(Texture2D image, Color opaqueColor, Color transparentColor)
-        {
-            var resultTex = new Texture2D(Core.GraphicsDevice, image.Width, image.Height, false, SurfaceFormat.Color);
-
-            var srcData = new Color[image.Width * image.Height];
-            image.GetData<Color>(srcData);
-
-            var destData = CreateFlatHeightmap(srcData, opaqueColor, transparentColor);
-
-            resultTex.SetData(destData);
-
-            return resultTex;
-        }
-
-        public static Color[] CreateFlatHeightmap(Color[] srcData, Color opaqueColor, Color transparentColor)
-        {
-            var destData = new Color[srcData.Length];
-
-            for (var i = 0; i < srcData.Length; i++)
-            {
-                var pixel = srcData[i];
-
-                if (pixel.A == 0)
-                    destData[i] = transparentColor;
-                else
-                    destData[i] = opaqueColor;
-            }
-
-            return destData;
-        }
     }
 }
