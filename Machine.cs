@@ -10,8 +10,8 @@ namespace Zen.EC
         HashSet<Entity> _entities = new HashSet<Entity>();
         HashSet<Entity> _entitiesToAdd = new HashSet<Entity>();
         HashSet<Entity> _entitiesToRemove = new HashSet<Entity>();
-        List<IDrawable> drawables = new List<IDrawable>();
-        List<IUpdatable> updatables = new List<IUpdatable>();
+        List<IDrawable> _drawables = new List<IDrawable>();
+        List<IUpdatable> _updatables = new List<IUpdatable>();
         SpriteBatch _spriteBatch;
         Renderer _renderer;
 
@@ -29,9 +29,7 @@ namespace Zen.EC
 
         public void Update()
         {
-            foreach (Entity entity in _entities)
-                entity.Update();
-                
+
             if (_entitiesToRemove.Count > 0)
             {
                 foreach (Entity entity in _entitiesToRemove)
@@ -47,17 +45,18 @@ namespace Zen.EC
             {
                 foreach (Entity entity in _entitiesToAdd)
                 {
-                    foreach (Component component in entity.GetComponents())
-                    {
-                        if (component is IDrawable)
-                            drawables.Add(component as IDrawable);
-                        if (component is IUpdatable)
-                            updatables.Add(component as IUpdatable);
-                    }
+                    _entities.Add(entity);
+                    entity.Machine = this;
                 }
 
                 _entitiesToAdd.Clear();
             }
+
+            foreach (Entity entity in _entities)
+                entity.Update();
+
+            foreach (IUpdatable updatable in _updatables)
+                updatable.Update();
         }
 
         public void Init(Core core)
@@ -76,7 +75,7 @@ namespace Zen.EC
             if (!Renderer.BeginCalled)
                 Renderer.Begin();
 
-            foreach (IDrawable drawable in drawables)
+            foreach (IDrawable drawable in _drawables)
                 Renderer.Draw(drawable);
 
             Renderer.End();
@@ -87,17 +86,25 @@ namespace Zen.EC
             _entitiesToAdd.Add(entity);
         }
 
+        public void RegisterComponent(Component component)
+        {
+            if (component is IUpdatable)
+                _updatables.Add(component as IUpdatable);
+            if (component is IDrawable)
+                _drawables.Add(component as IDrawable);
+        }
+
+        public void UnRegisterComponent(Component component)
+        {
+            if (component is IUpdatable)
+                _updatables.Remove(component as IUpdatable);
+            if (component is IDrawable)
+                _drawables.Remove(component as IDrawable);
+        }
+
         public void RemoveEntity(Entity entity)
         {
-            foreach (Component component in entity.GetComponents())
-            {
-                if (component is IDrawable)
-                    drawables.Remove(component as IDrawable);
-                if (component is IUpdatable)
-                    updatables.Remove(component as IUpdatable);
-            }
-
-            _entities.Remove(entity);
+            _entitiesToRemove.Add(entity);
         }
 
         public virtual void LoadContent(ContentManager content) { }

@@ -6,6 +6,7 @@ namespace Zen.EC
     {
         public string Name;
         public Transform Transform;
+        public Machine Machine;
         List<Component> _components = new List<Component>();
         List<Component> _componentsToAdd = new List<Component>();
         List<Component> _componentsToRemove = new List<Component>();
@@ -23,6 +24,7 @@ namespace Zen.EC
             {
                 foreach (Component component in _componentsToRemove)
                 {
+                    Machine.UnRegisterComponent(component);
                     _components.Remove(component);
                     component.OnDestroy();
                 }
@@ -42,6 +44,7 @@ namespace Zen.EC
 
                 foreach (Component component in _tempBufferList)
                 {
+                    Machine.RegisterComponent(component);
                     component.Entity = this;
                     component.Awake();
                 }
