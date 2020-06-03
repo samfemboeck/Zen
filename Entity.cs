@@ -1,16 +1,19 @@
+using System;
 using System.Collections.Generic;
+using Zen.Components;
 
-namespace Zen.EC
+namespace Zen
 {
     public class Entity
     {
         public string Name;
         public Transform Transform;
-        public Machine Machine;
+        Machine _machine;
         List<Component> _components = new List<Component>();
         List<Component> _componentsToAdd = new List<Component>();
         List<Component> _componentsToRemove = new List<Component>();
-        List<Component> _tempBufferList = new List<Component>();
+        List<IDrawable> _toDraw = new List<IDrawable>();
+        List<IUpdatable> _toUpdate = new List<IUpdatable>();
 
         public Entity(string name)
         {
@@ -20,13 +23,26 @@ namespace Zen.EC
 
         public void Update() 
         {
+            UpdateLists();
+
+            foreach (IUpdatable updatable in _toUpdate)
+                updatable.Update();
+        }
+
+        public void Draw()
+        {
+            foreach (IDrawable drawable in _toDraw)
+                drawable.Draw();
+        }
+
+        public void UpdateLists()
+        {
             if (_componentsToRemove.Count > 0)
             {
                 foreach (Component component in _componentsToRemove)
                 {
-                    Machine.UnRegisterComponent(component);
                     _components.Remove(component);
-                    component.OnDestroy();
+                    component.Destroy();
                 }
 
                 _componentsToRemove.Clear();
@@ -37,19 +53,34 @@ namespace Zen.EC
                 foreach (Component component in _componentsToAdd)
                 {
                     _components.Add(component);
-                    _tempBufferList.Add(component);
                 }
 
                 _componentsToAdd.Clear();
+            }
+        }
 
-                foreach (Component component in _tempBufferList)
-                {
-                    Machine.RegisterComponent(component);
-                    component.Entity = this;
-                    component.Awake();
-                }
+        public void Mount(Machine machine)
+        {
+            _machine = machine;
+            UpdateLists();
+            RegisterComponents();
+        }
 
-                _tempBufferList.Clear();
+        public void UnMount()
+        {
+            _machine = null;
+        }
+
+        public void RegisterComponents()
+        {
+            foreach (Component component in _components)
+            {
+                if (component is IUpdatable updatable)
+                    _toUpdate.Add(updatable);
+                if (component is IDrawable drawable)
+                    _toDraw.Add(drawable);
+
+                component.Register(this);
             }
         }
 

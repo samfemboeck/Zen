@@ -1,4 +1,4 @@
-namespace Zen.EC
+namespace Zen
 {
     public interface IUpdatable
     {

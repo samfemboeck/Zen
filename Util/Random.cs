@@ -3,11 +3,10 @@ using Microsoft.Xna.Framework;
 
 namespace Zen.Util
 {
-
-	public static class Random
+    public static class Random
 	{
 		private static int _seed = Environment.TickCount;
-		private static System.Random _rng = new System.Random();
+		public static System.Random RNG = new System.Random(_seed);
 
 
 		/// <summary>
@@ -27,7 +26,7 @@ namespace Zen.Util
 		public static void SetSeed(int seed)
 		{
 			_seed = seed;
-			_rng = new System.Random(_seed);
+			RNG = new System.Random(_seed);
 		}
 
 
@@ -37,7 +36,7 @@ namespace Zen.Util
 		/// <returns>The float.</returns>
 		public static float NextFloat()
 		{
-			return (float) _rng.NextDouble();
+			return (float) RNG.NextDouble();
 		}
 
 
@@ -48,7 +47,7 @@ namespace Zen.Util
 		/// <param name="max">Max.</param>
 		public static float NextFloat(float max)
 		{
-			return (float) _rng.NextDouble() * max;
+			return (float) RNG.NextDouble() * max;
 		}
 
 
@@ -59,7 +58,7 @@ namespace Zen.Util
 		/// <param name="max">Max.</param>
 		public static int NextInt(int max)
 		{
-			return _rng.Next(max);
+			return RNG.Next(max);
 		}
 
 
@@ -69,7 +68,7 @@ namespace Zen.Util
 		/// <returns>The angle.</returns>
 		public static float NextAngle()
 		{
-			return (float) (_rng.NextDouble() * 2 * Math.PI);
+			return (float) RNG.NextDouble() * MathHelper.TwoPi;
 		}
 
 
@@ -91,7 +90,7 @@ namespace Zen.Util
 		/// <returns></returns>
 		public static int Range(int min, int max)
 		{
-			return _rng.Next(min, max);
+			return RNG.Next(min, max);
 		}
 
 

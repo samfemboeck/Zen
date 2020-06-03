@@ -1,28 +1,20 @@
-﻿/*
-    Studiengang MultimediaTechnology, FH Salzburg
-    Multimediaprojekt 1
-    Author: Samuel Femböck
-*/
-
-using System;
-using Zen;
-using Zen.Util;
+﻿using System;
 
 namespace Zen.Util
 {
     public class Timer
     {
         public event Action OnFinish;
-        private readonly float _interval;
-        private readonly bool _isRepeating;
-        private float _elapsedTime;
+        readonly float _interval;
+        readonly bool _isRepeating;
+        float _elapsedTime;
         private bool _isDestroyed;
 
         public Timer(float interval, bool isRepeating, Action callBack)
         {
             _interval = interval;
-            OnFinish = callBack;
             _isRepeating = isRepeating;
+            OnFinish = callBack;
             TimerManager.Add(this);
         }
 

@@ -1,4 +1,4 @@
-namespace Zen.Graphics
+namespace Zen
 {
     public class SpriteAnimation
 	{

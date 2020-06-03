@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Zen.EC;
 using Zen.Util;
 
 namespace Zen
@@ -9,9 +8,9 @@ namespace Zen
     public abstract class Core : Game
     {
         public new static GraphicsDevice GraphicsDevice;
-        public SpriteBatch SpriteBatch;
+        public static Zen.Batching.Batcher Batcher;
         private Machine _machine;
-        private TimerManager _timerManager = new TimerManager();
+        private TimerManager _timerManager = TimerManager.Instance;
 
         protected Machine Machine
         {
@@ -19,12 +18,11 @@ namespace Zen
             set
             {
                 _machine = value;
-                _machine.Content = Content;
                 _machine.Init(this);
             }
         }
 
-        protected Core(int width = 1920, int height = 1080, bool isFullScreen = false)
+        public Core(int width = 1920, int height = 1080, bool isFullScreen = false)
         {
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -41,13 +39,13 @@ namespace Zen
 
         protected override void Initialize()
         {
-            GraphicsDevice = base.GraphicsDevice;
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
+            GraphicsDevice = base.GraphicsDevice;
+            Batcher = new Zen.Batching.Batcher(GraphicsDevice);
             Start();
         }
 
-        public virtual void Start() { }
+        public abstract void Start();
 
         protected override void Update(GameTime gameTime)
         {
@@ -57,8 +55,6 @@ namespace Zen
             Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
             
             _timerManager.Update();
-            
-            Input.Update();
             
             Machine.Update();
 

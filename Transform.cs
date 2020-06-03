@@ -1,18 +1,14 @@
-using System;
 using Microsoft.Xna.Framework;
+using Zen.Util;
 
-namespace Zen.EC
+namespace Zen
 {
     public class Transform
     {
+        public float Rotation;
         public Vector2 Position;
         public float Scale = 1;
-        public float Rotation;
 
-        /// <summary>
-		/// Rotate so the top of the sprite is facing <see cref="pos"/>
-		/// </summary>
-		/// <param name="pos">The position to look at</param>
 		public void LookAt(Vector2 pos)
 		{
 			var sign = Position.X > pos.X ? -1 : 1;

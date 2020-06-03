@@ -1,8 +1,8 @@
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Zen.Textures
+namespace Zen.Util
 {
     /// <summary>
     /// various utilties for creating textures on the fly. These can be pretty heavy on the CPU so it's best to not try to use them every frame.
@@ -16,26 +16,6 @@ namespace Zen.Textures
             FiveTap
         }
 
-#if FNA
-		/// <summary>
-		/// loads a Texture2D and premultiplies the alpha
-		/// </summary>
-		public static Texture2D TextureFromStreamPreMultiplied(Stream stream)
-		{
-			if (stream.CanSeek && stream.Position == stream.Length)
-				stream.Seek(0, SeekOrigin.Begin);
-
-			Texture2D.TextureDataFromStreamEXT(stream, out int width, out int height, out var pixels);
-			PremultiplyAlpha(pixels);
-
-			var result = new Texture2D(Core.GraphicsDevice, width, height);
-			result.SetData(pixels);
-			return result;
-		}
-#else
-        /// <summary>
-        /// loads a Texture2D and premultiplies the alpha
-        /// </summary>
         public static Texture2D TextureFromStreamPreMultiplied(Stream stream)
         {
             var texture = Texture2D.FromStream(Core.GraphicsDevice, stream);
@@ -47,7 +27,6 @@ namespace Zen.Textures
 
             return texture;
         }
-#endif
 
         static unsafe void PremultiplyAlpha(byte[] pixels)
         {

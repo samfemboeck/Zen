@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Zen.Util;
 
-namespace Zen.AI
+namespace Zen
 {
-    public class StateMachine<T>
+public class StateMachine<T>
 	{
 		public event Action OnStateChanged;
 
@@ -56,8 +55,8 @@ namespace Zen.AI
 		public virtual R GetState<R>() where R : State<T>
 		{
 			var type = typeof(R);
-			Insist.IsTrue(_states.ContainsKey(type),
-				"{0}: state {1} does not exist. Did you forget to add it by calling addState?", GetType(), type);
+			System.Diagnostics.Debug.Assert(_states.ContainsKey(type),
+				"{0}: state {1} does not exist. Did you forget to add it by calling addState?");
 
 			return (R)_states[type];
 		}
@@ -77,8 +76,8 @@ namespace Zen.AI
 			if (_currentState != null)
 				_currentState.End();
 
-			Insist.IsTrue(_states.ContainsKey(newType),
-				"{0}: state {1} does not exist. Did you forget to add it by calling addState?", GetType(), newType);
+			System.Diagnostics.Debug.Assert(_states.ContainsKey(newType),
+				"{0}: state {1} does not exist. Did you forget to add it by calling addState?");
 
 			// swap states and call begin
 			ElapsedTimeInState = 0f;
