@@ -11,6 +11,8 @@ namespace Zen.Components
             Entity = entity;
         }
 
+        public virtual void Mount() {}
+
         public virtual void Destroy() {}
     }
 }

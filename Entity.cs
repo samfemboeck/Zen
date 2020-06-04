@@ -12,7 +12,7 @@ namespace Zen
         List<Component> _components = new List<Component>();
         List<Component> _componentsToAdd = new List<Component>();
         List<Component> _componentsToRemove = new List<Component>();
-        List<IDrawable> _toDraw = new List<IDrawable>();
+        public List<IDrawable> ToDraw = new List<IDrawable>();
         List<IUpdatable> _toUpdate = new List<IUpdatable>();
 
         public Entity(string name)
@@ -31,7 +31,7 @@ namespace Zen
 
         public void Draw()
         {
-            foreach (IDrawable drawable in _toDraw)
+            foreach (IDrawable drawable in ToDraw)
                 drawable.Draw();
         }
 
@@ -42,6 +42,12 @@ namespace Zen
                 foreach (Component component in _componentsToRemove)
                 {
                     _components.Remove(component);
+
+                    if (component is IUpdatable updatable)
+                        _toUpdate.Remove(updatable);
+                    if (component is IDrawable drawable)
+                        ToDraw.Remove(drawable);
+
                     component.Destroy();
                 }
 
@@ -53,6 +59,13 @@ namespace Zen
                 foreach (Component component in _componentsToAdd)
                 {
                     _components.Add(component);
+
+                    if (component is IUpdatable updatable)
+                        _toUpdate.Add(updatable);
+                    if (component is IDrawable drawable)
+                        ToDraw.Add(drawable);
+
+                    component.Register(this);
                 }
 
                 _componentsToAdd.Clear();
@@ -63,25 +76,14 @@ namespace Zen
         {
             _machine = machine;
             UpdateLists();
-            RegisterComponents();
+            
+            foreach (Component component in _components)
+                component.Mount();
         }
 
         public void UnMount()
         {
             _machine = null;
-        }
-
-        public void RegisterComponents()
-        {
-            foreach (Component component in _components)
-            {
-                if (component is IUpdatable updatable)
-                    _toUpdate.Add(updatable);
-                if (component is IDrawable drawable)
-                    _toDraw.Add(drawable);
-
-                component.Register(this);
-            }
         }
 
         public void AddComponent(Component component)

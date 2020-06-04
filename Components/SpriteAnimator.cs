@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Zen.Components
@@ -10,12 +11,14 @@ namespace Zen.Components
             FreezeAtLastFrame,
         }
 
+        public event Action OnAnimationFinish;
         SpriteAtlas _atlas;
         Dictionary<string, SpriteAnimation> _animations = new Dictionary<string, SpriteAnimation>();
-        SpriteAnimation _currentAnimation;
+        public SpriteAnimation CurrentAnimation;
         LoopMode _loopMode;
         float _elapsedTime;
         string _currentAnimationName;
+        bool _animationActive;
 
 
         public SpriteAnimator(SpriteAtlas atlas)
@@ -30,8 +33,9 @@ namespace Zen.Components
 
         public void Play(string name, LoopMode? loopMode = null)
         {
-            _currentAnimation = _animations[name];
-            Sprite = _currentAnimation.Sprites[0];
+            _animationActive = true;
+            CurrentAnimation = _animations[name];
+            Sprite = CurrentAnimation.Sprites[0];
             _elapsedTime = 0;
             _loopMode = loopMode ?? LoopMode.Loop;
             _currentAnimationName = name;
@@ -39,21 +43,29 @@ namespace Zen.Components
 
         public void Update()
         {
-            float secondsPerFrame = 1 / (_currentAnimation.FrameRate);
-            float iterationDuration = secondsPerFrame * _currentAnimation.Sprites.Length;
+            if (!_animationActive)
+                return;
+
+            float secondsPerFrame = 1 / (CurrentAnimation.FrameRate);
+            float iterationDuration = secondsPerFrame * CurrentAnimation.Sprites.Length;
             _elapsedTime += Time.DeltaTime;
 
             if (_loopMode == LoopMode.Loop && _elapsedTime > iterationDuration)
             {
+                OnAnimationFinish?.Invoke();
+                _animationActive = false;
                 Play(_currentAnimationName, _loopMode);
+                return;
             }
             else if (_loopMode == LoopMode.FreezeAtLastFrame && _elapsedTime > iterationDuration)
             {
-                _elapsedTime -= Time.DeltaTime;
+                OnAnimationFinish?.Invoke();
+                _animationActive = false;
+                return;
             }
 
             int currentFrame = (int)(_elapsedTime / secondsPerFrame);
-            Sprite = _currentAnimation.Sprites[currentFrame];
+            Sprite = CurrentAnimation.Sprites[currentFrame];
         }
     }
 }

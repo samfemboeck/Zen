@@ -3,39 +3,42 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Zen.Components
 {
-    public class SpriteRenderer : Component, Zen.IDrawable
+    public class SpriteRenderer : Component, IDrawable
     {
         public Color Color = Color.White;
         public float LayerDepth;
         public Sprite Sprite { get; protected set; }
-        SpriteEffects _spriteEffects;
+        Material IDrawable.Material { get => Material.Default; }
+        public SpriteEffects SpriteEffects { get; protected set; }
+        public Vector2 Origin;
 
 		public bool FlipX
 		{
-			get => (_spriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
-			set => _spriteEffects = value
-				? (_spriteEffects | SpriteEffects.FlipHorizontally)
-				: (_spriteEffects & ~SpriteEffects.FlipHorizontally);
+			get => (SpriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
+			set => SpriteEffects = value
+				? (SpriteEffects | SpriteEffects.FlipHorizontally)
+				: (SpriteEffects & ~SpriteEffects.FlipHorizontally);
 		}
 
 		public bool FlipY
 		{
-			get => (_spriteEffects & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically;
-			set => _spriteEffects = value
-				? (_spriteEffects | SpriteEffects.FlipVertically)
-				: (_spriteEffects & ~SpriteEffects.FlipVertically);
+			get => (SpriteEffects & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically;
+			set => SpriteEffects = value
+				? (SpriteEffects | SpriteEffects.FlipVertically)
+				: (SpriteEffects & ~SpriteEffects.FlipVertically);
 		}
 
         public SpriteRenderer(Sprite sprite)
         {
             Sprite = sprite;
+            Origin = sprite.Origin;
         }
 
         public SpriteRenderer() {}
 
-        public void Draw()
+        public virtual void Draw()
         {
-            Core.Batcher.Draw(Sprite, Entity.Transform.Position, Color, Entity.Transform.Rotation, Sprite.Origin, Entity.Transform.Scale, _spriteEffects, LayerDepth);
+            Core.Batcher.Draw(Sprite, Entity.Transform.Position, Color, Entity.Transform.Rotation, Sprite.Origin, Entity.Transform.Scale, SpriteEffects, LayerDepth);
         }
     }
 }

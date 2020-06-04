@@ -10,6 +10,7 @@ namespace Zen
         private readonly HashSet<Entity> _entitiesToAdd = new HashSet<Entity>();
         private readonly HashSet<Entity> _entitiesToRemove = new HashSet<Entity>();
         protected ContentManager Content;
+        public Renderer Renderer { get; set; }
 
         public void Update()
         {
@@ -47,18 +48,17 @@ namespace Zen
         public void Init(Core core)
         {
             Content = core.Content;
+
+            if (Renderer == null)
+                Renderer = new Renderer();
+
             UpdateLists();
             FireUp();
         }
 
         public void Draw()
         {
-            Core.Batcher.Begin();
-
-            foreach (Entity entity in _entities)
-                entity.Draw();
-
-            Core.Batcher.End();
+            Renderer.Draw(_entities);
         }
 
         public void AddEntity(Entity entity)

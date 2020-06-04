@@ -28,6 +28,8 @@ namespace Zen
 			Uvs.Height = sourceRect.Height * inverseTexH;
 		}
 
+		public Sprite(Texture2D texture) : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), new Vector2(texture.Width * 0.5f, texture.Height * 0.5f)) {}
+
 		public static implicit operator Texture2D(Sprite tex) => tex.Texture2D;
     }
 }
