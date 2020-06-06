@@ -885,6 +885,8 @@ namespace Zen.Batching
 
             _vertexBuffer.SetData(0, _vertexInfo, 0, _numSprites, VertexPositionColorTexture4.RealStride, SetDataOptions.None);
 
+            
+
             curTexture = _textureInfo[0];
             for (var i = 1; i < _numSprites; i += 1)
             {

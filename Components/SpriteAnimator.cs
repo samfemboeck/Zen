@@ -28,7 +28,8 @@ namespace Zen.Components
             for (var i = 0; i < atlas.AnimationNames.Length; i++)
                 _animations.Add(atlas.AnimationNames[i], atlas.SpriteAnimations[i]);
 
-            Play(atlas.AnimationNames[0]);
+            CurrentAnimation = _animations[atlas.AnimationNames[0]];
+            Sprite = CurrentAnimation.Sprites[0];
         }
 
         public void Play(string name, LoopMode? loopMode = null)

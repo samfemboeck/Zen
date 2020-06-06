@@ -9,6 +9,7 @@ namespace Zen
     {
         public new static GraphicsDevice GraphicsDevice;
         public static Zen.Batching.Batcher Batcher;
+        public static SpriteBatch SpriteBatch;
         private Machine _machine;
         private TimerManager _timerManager = TimerManager.Instance;
 
@@ -39,9 +40,18 @@ namespace Zen
 
         protected override void Initialize()
         {
-            base.Initialize();
             GraphicsDevice = base.GraphicsDevice;
             Batcher = new Zen.Batching.Batcher(GraphicsDevice);
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
+            Physics.Init(100);
+            base.Initialize();
+        }
+
+        protected override void LoadContent()
+        {
+            Texture2D texture = Content.Load<Texture2D>("Mobs/Squid/circle");
+            PrimitiveRectangleTexture rectTexture = new PrimitiveRectangleTexture(GraphicsDevice, texture, new RectangleF(0, 0, 600, 600));
+            Renderer.RectTexture = rectTexture;
             Start();
         }
 

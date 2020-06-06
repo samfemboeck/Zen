@@ -11,6 +11,6 @@ namespace Zen
         public SamplerState SamplerState;
         public DepthStencilState DepthStencilState;
         public BlendState BlendState;
-        public Effect Effect;
+        public RasterizerState RasterizerState;
     }
 }

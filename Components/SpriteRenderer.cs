@@ -7,10 +7,20 @@ namespace Zen.Components
     {
         public Color Color = Color.White;
         public float LayerDepth;
-        public Sprite Sprite { get; protected set; }
         Material IDrawable.Material { get => Material.Default; }
         public SpriteEffects SpriteEffects { get; protected set; }
         public Vector2 Origin;
+        Sprite _sprite;
+
+        public Sprite Sprite 
+        { 
+            get => _sprite;
+            protected set
+            {
+                _sprite = value;
+                Origin = value.Origin;
+            }
+        }
 
 		public bool FlipX
 		{
@@ -31,14 +41,13 @@ namespace Zen.Components
         public SpriteRenderer(Sprite sprite)
         {
             Sprite = sprite;
-            Origin = sprite.Origin;
         }
 
         public SpriteRenderer() {}
 
         public virtual void Draw()
         {
-            Core.Batcher.Draw(Sprite, Entity.Transform.Position, Color, Entity.Transform.Rotation, Sprite.Origin, Entity.Transform.Scale, SpriteEffects, LayerDepth);
+            Core.Batcher.Draw(Sprite, Entity.Transform.Position, Color, Entity.Transform.Rotation, Origin, Entity.Transform.Scale, SpriteEffects, LayerDepth);
         }
     }
 }

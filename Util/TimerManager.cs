@@ -8,7 +8,7 @@ namespace Zen.Util
         List<Timer> _toAdd = new List<Timer>();
         List<Timer> _timers = new List<Timer>();
 
-        static TimerManager _instance;
+        static TimerManager _instance = null;
 
         public static TimerManager Instance
         {
@@ -19,7 +19,6 @@ namespace Zen.Util
 
                 return _instance;
             }
-            private set => _instance = value;
         }
 
         TimerManager() {}

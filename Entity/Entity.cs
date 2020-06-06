@@ -12,26 +12,27 @@ namespace Zen
         List<Component> _components = new List<Component>();
         List<Component> _componentsToAdd = new List<Component>();
         List<Component> _componentsToRemove = new List<Component>();
-        public List<IDrawable> ToDraw = new List<IDrawable>();
-        List<IUpdatable> _toUpdate = new List<IUpdatable>();
+        List<IDrawable> _drawables = new List<IDrawable>();
+        List<IUpdatable> _updatables = new List<IUpdatable>();
+        List<ITransformListener> _transformListeners = new List<ITransformListener>();
 
         public Entity(string name)
         {
             Name = name;
-            Transform = new Transform();
+            Transform = new Transform(this);
         }
 
         public void Update() 
         {
             UpdateLists();
 
-            foreach (IUpdatable updatable in _toUpdate)
+            foreach (IUpdatable updatable in _updatables)
                 updatable.Update();
         }
 
         public void Draw()
         {
-            foreach (IDrawable drawable in ToDraw)
+            foreach (IDrawable drawable in _drawables)
                 drawable.Draw();
         }
 
@@ -44,9 +45,11 @@ namespace Zen
                     _components.Remove(component);
 
                     if (component is IUpdatable updatable)
-                        _toUpdate.Remove(updatable);
+                        _updatables.Remove(updatable);
                     if (component is IDrawable drawable)
-                        ToDraw.Remove(drawable);
+                        _drawables.Remove(drawable);
+                    if (component is ITransformListener transformListener)
+                        _transformListeners.Remove(transformListener);
 
                     component.Destroy();
                 }
@@ -61,9 +64,11 @@ namespace Zen
                     _components.Add(component);
 
                     if (component is IUpdatable updatable)
-                        _toUpdate.Add(updatable);
+                        _updatables.Add(updatable);
                     if (component is IDrawable drawable)
-                        ToDraw.Add(drawable);
+                        _drawables.Add(drawable);
+                    if (component is ITransformListener transformListener)
+                        _transformListeners.Add(transformListener);
 
                     component.Register(this);
                 }
@@ -118,6 +123,13 @@ namespace Zen
         {
             return _components.ToArray();
         }
+
+        public void UpdateTransform()
+        {
+
+        }
+
+        public List<IDrawable> Drawables { get => _drawables; }
 
         public virtual void OnDestroy() { }
     }

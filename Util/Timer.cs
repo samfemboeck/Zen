@@ -15,6 +15,7 @@ namespace Zen.Util
             _interval = interval;
             _isRepeating = isRepeating;
             OnFinish = callBack;
+            System.Console.WriteLine("new timer");
             TimerManager.Add(this);
         }
 
