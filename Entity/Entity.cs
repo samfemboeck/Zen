@@ -7,19 +7,16 @@ namespace Zen
     public class Entity
     {
         public string Name;
-        public Transform Transform;
         Machine _machine;
         List<Component> _components = new List<Component>();
         List<Component> _componentsToAdd = new List<Component>();
         List<Component> _componentsToRemove = new List<Component>();
         List<IDrawable> _drawables = new List<IDrawable>();
         List<IUpdatable> _updatables = new List<IUpdatable>();
-        List<ITransformListener> _transformListeners = new List<ITransformListener>();
 
         public Entity(string name)
         {
             Name = name;
-            Transform = new Transform(this);
         }
 
         public void Update() 
@@ -48,8 +45,6 @@ namespace Zen
                         _updatables.Remove(updatable);
                     if (component is IDrawable drawable)
                         _drawables.Remove(drawable);
-                    if (component is ITransformListener transformListener)
-                        _transformListeners.Remove(transformListener);
 
                     component.Destroy();
                 }
@@ -67,8 +62,6 @@ namespace Zen
                         _updatables.Add(updatable);
                     if (component is IDrawable drawable)
                         _drawables.Add(drawable);
-                    if (component is ITransformListener transformListener)
-                        _transformListeners.Add(transformListener);
 
                     component.Register(this);
                 }
@@ -83,7 +76,14 @@ namespace Zen
             UpdateLists();
             
             foreach (Component component in _components)
+            {
+                component.PreMount();
+            }
+
+            foreach (Component component in _components)
+            {
                 component.Mount();
+            }
         }
 
         public void UnMount()
@@ -119,9 +119,9 @@ namespace Zen
             return null;
         }
 
-        public Component[] GetComponents()
+        public List<Component> GetComponents()
         {
-            return _components.ToArray();
+            return _components;
         }
 
         public void UpdateTransform()

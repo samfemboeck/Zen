@@ -8,9 +8,9 @@ namespace Zen
 
         public static Material LinearWrap = new Material() { SamplerState = SamplerState.LinearWrap };
         
-        public SamplerState SamplerState;
-        public DepthStencilState DepthStencilState;
-        public BlendState BlendState;
-        public RasterizerState RasterizerState;
+        public SamplerState SamplerState = SamplerState.LinearWrap;
+        public DepthStencilState DepthStencilState = DepthStencilState.Default;
+        public BlendState BlendState = BlendState.AlphaBlend;
+        public RasterizerState RasterizerState = RasterizerState.CullNone;
     }
 }

@@ -8,16 +8,7 @@ namespace Zen
 {
     public class Renderer
     {
-        public static SamplerState DefaultSamplerState = SamplerState.LinearClamp;
         Material _curMaterial = Material.Default;
-        //PrimitiveRectangleRenderer _rectangle = new PrimitiveRectangleRenderer(Core.GraphicsDevice, new RectangleF(0, 0, 100, 100), Color.Green);
-        //PrimitiveCircleBorder _circle = new PrimitiveCircleBorder(Core.GraphicsDevice, Vector2.Zero, 100, 40, 5, Color.Red);
-        public static PrimitiveRectangleTexture RectTexture;
-
-        public Renderer()
-        {
-            Core.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-        }
 
         public void Draw(HashSet<Entity> entities)
         {
@@ -38,9 +29,6 @@ namespace Zen
                 }
             }
             Core.Batcher.End();
-
-            //rectangle.Draw();
-            //RectTexture.Draw();
         }
     }
 }

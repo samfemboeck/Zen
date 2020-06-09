@@ -1,4 +1,4 @@
-namespace Zen
+/*namespace Zen
 {
     public static class Physics
     {
@@ -13,4 +13,4 @@ namespace Zen
 
         public static void UnRegisterCollider(Collider collider) => _spatialHash.Remove(collider);
     }
-}
+}*/

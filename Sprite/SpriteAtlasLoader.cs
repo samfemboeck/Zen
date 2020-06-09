@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Zen.Util;
 
 namespace Zen
 {
@@ -43,7 +44,7 @@ namespace Zen
 							// source rect
 							line = stream.ReadLine();
 							var lineParts = line.Split(commaSplitter, StringSplitOptions.RemoveEmptyEntries);
-							var rect = new Rectangle(int.Parse(lineParts[0]), int.Parse(lineParts[1]), int.Parse(lineParts[2]), int.Parse(lineParts[3]));
+							var rect = new RectangleF(int.Parse(lineParts[0]), int.Parse(lineParts[1]), int.Parse(lineParts[2]), int.Parse(lineParts[3]));
 							spriteAtlas.SourceRects.Add(rect);
 
 							// origin

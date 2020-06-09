@@ -7,28 +7,34 @@ namespace Zen
     public class Sprite
     {
         public Texture2D Texture2D;
-		public Rectangle SourceRect;
-		public RectangleF Uvs;
+		public RectangleF UvRect;
 		public Vector2 Center;
 		public Vector2 Origin;
+		public float Width;
+		public float Height;
+		public bool FlipHorizontally;
+		public bool FlipVertically;
 
-        public Sprite(Texture2D texture, Rectangle sourceRect, Vector2 origin)
+        public Sprite(Texture2D texture, RectangleF uvRect, Vector2? origin = null, float? width = null, float? height = null)
 		{
 			Texture2D = texture;
-			SourceRect = sourceRect;
-			Center = new Vector2(sourceRect.Width * 0.5f, sourceRect.Height * 0.5f);
-			Origin = origin;
+			UvRect = uvRect;
+			Center = new Vector2(uvRect.Width * 0.5f, uvRect.Height * 0.5f);
+			Origin = origin ?? new Vector2(texture.Width * 0.5f, texture.Height * 0.5f);
 
 			var inverseTexW = 1.0f / Texture2D.Width;
 			var inverseTexH = 1.0f / Texture2D.Height;
 
-			Uvs.X = sourceRect.X * inverseTexW;
-			Uvs.Y = sourceRect.Y * inverseTexH;
-			Uvs.Width = sourceRect.Width * inverseTexW;
-			Uvs.Height = sourceRect.Height * inverseTexH;
+			UvRect.X = uvRect.X * inverseTexW;
+			UvRect.Y = uvRect.Y * inverseTexH;
+			UvRect.Width = uvRect.Width * inverseTexW;
+			UvRect.Height = uvRect.Height * inverseTexH;
+
+			Width = width ?? UvRect.Width * texture.Width;
+			Height = height ?? UvRect.Height * texture.Height;
 		}
 
-		public Sprite(Texture2D texture) : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), new Vector2(texture.Width * 0.5f, texture.Height * 0.5f)) {}
+		public Sprite(Texture2D texture) : this(texture, new RectangleF(0, 0, texture.Width, texture.Height), new Vector2(texture.Width * 0.5f, texture.Height * 0.5f), texture.Width, texture.Height) {}
 
 		public static implicit operator Texture2D(Sprite tex) => tex.Texture2D;
     }

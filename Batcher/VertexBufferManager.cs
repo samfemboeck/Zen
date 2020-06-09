@@ -10,23 +10,27 @@ namespace Zen
         GraphicsDevice _graphicsDevice;
 
         DynamicVertexBuffer _vertexBuffer;
-        VertexPositionColorTexture4[] _preVertexBuffer;
+        VertexPositionColorTexture4[] _vertexPreBuffer;
         IndexBuffer _indexBuffer;
         readonly short[] Indices = CreateIndices();
+        Texture2D[] _textureBuffer;
 
         const int MaxSprites = 100;
         const int MaxVertices = MaxSprites * 4;
         const int MaxIndices = MaxSprites * 6;
-        int _preVertexBufferSize;
+        int _numSprites;
+
+        Texture2D _curTexture;
 
         public VertexBufferManager(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
 
             _vertexBuffer = new DynamicVertexBuffer(graphicsDevice, typeof(VertexPositionColorTexture), MaxSprites * 4, BufferUsage.WriteOnly);
-            _preVertexBuffer = new VertexPositionColorTexture4[MaxSprites];
+            _vertexPreBuffer = new VertexPositionColorTexture4[MaxSprites];
             _indexBuffer = new IndexBuffer(graphicsDevice, IndexElementSize.SixteenBits, MaxIndices, BufferUsage.WriteOnly);
             _indexBuffer.SetData(Indices);
+            _textureBuffer = new Texture2D[MaxSprites];
         }
 
         static short[] CreateIndices()
@@ -46,11 +50,37 @@ namespace Zen
             return ret;
         }
 
-        public void Push(VertexPositionColorTexture4 vertexPositionColorTexture) => _preVertexBuffer[_preVertexBufferSize++] = vertexPositionColorTexture;
+        public void PushSprite(VertexPositionColorTexture4 vertexPositionColorTexture, Texture2D texture)
+        {
+            _vertexPreBuffer[_numSprites] = vertexPositionColorTexture;
+            _textureBuffer[_numSprites] = texture;
+            _numSprites++;
+        }
 
-        public void Clear() => _preVertexBufferSize = 0;
+        public void Flush()
+        {
+            _vertexBuffer.SetData(0, _vertexPreBuffer, 0, _numSprites, VertexPositionColorTexture4.RealStride, SetDataOptions.None);
+            _graphicsDevice.SetVertexBuffer(_vertexBuffer);
+            _graphicsDevice.Indices = _indexBuffer;
 
-        void SetBufferData() => _vertexBuffer.SetData(0, _preVertexBuffer, 0, _preVertexBufferSize, VertexPositionColorTexture4.RealStride, SetDataOptions.None);
+            int offset = 0;
+            _curTexture = _textureBuffer[0];
+            for (int i = 1; i < _numSprites; i++)
+            {
+                if (_textureBuffer[i] != _curTexture)
+                {
+                    _graphicsDevice.Textures[0] = _curTexture;
+                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, offset * 4, 0, 2);
+                    _curTexture = _textureBuffer[i];
+                    offset = i;
+                }
+            }
+
+            _graphicsDevice.Textures[0] = _curTexture;
+            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, offset * 4, 0, 2);
+
+            _numSprites = 0;
+        }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct VertexPositionColorTexture4 : IVertexType

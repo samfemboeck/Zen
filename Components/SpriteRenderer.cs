@@ -1,42 +1,36 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Zen.Util;
 
 namespace Zen.Components
 {
-    public class SpriteRenderer : Component, IDrawable
+    public class SpriteRenderer : Component, IDrawable, ITransformObserver
     {
         public Color Color = Color.White;
-        public float LayerDepth;
         Material IDrawable.Material { get => Material.Default; }
         public SpriteEffects SpriteEffects { get; protected set; }
-        public Vector2 Origin;
+        public Vector2 LocalOffset;
+        public Vertex4 Vertices;
+        Vertex4 _baseVertices;
         Sprite _sprite;
 
-        public Sprite Sprite 
-        { 
+        public Sprite Sprite
+        {
             get => _sprite;
             protected set
             {
                 _sprite = value;
-                Origin = value.Origin;
+                _baseVertices.LeftTop = Vector3.Zero;
+                _baseVertices.RightTop = new Vector3(value.Width, 0, 0);
+                _baseVertices.RightBottom = new Vector3(value.Width, value.Height, 0);
+                _baseVertices.LeftBottom = new Vector3(0, value.Height, 0);
             }
         }
 
-		public bool FlipX
-		{
-			get => (SpriteEffects & SpriteEffects.FlipHorizontally) == SpriteEffects.FlipHorizontally;
-			set => SpriteEffects = value
-				? (SpriteEffects | SpriteEffects.FlipHorizontally)
-				: (SpriteEffects & ~SpriteEffects.FlipHorizontally);
-		}
-
-		public bool FlipY
-		{
-			get => (SpriteEffects & SpriteEffects.FlipVertically) == SpriteEffects.FlipVertically;
-			set => SpriteEffects = value
-				? (SpriteEffects | SpriteEffects.FlipVertically)
-				: (SpriteEffects & ~SpriteEffects.FlipVertically);
-		}
+        public override void PreMount()
+        {
+            GetComponent<Transform>().Origin = _sprite.Origin;
+        }
 
         public SpriteRenderer(Sprite sprite)
         {
@@ -47,7 +41,17 @@ namespace Zen.Components
 
         public virtual void Draw()
         {
-            Core.Batcher.Draw(Sprite, Entity.Transform.Position, Color, Entity.Transform.Rotation, Origin, Entity.Transform.Scale, SpriteEffects, LayerDepth);
+            Core.Batcher.PushQuad(Sprite.Texture2D, Sprite.UvRect, Vertices, Color);
         }
+
+        void TransformVertices(Matrix transformMatrix)
+        {
+            Vertices.LeftTop = Vector3.Transform(_baseVertices.LeftTop, transformMatrix);
+            Vertices.RightTop = Vector3.Transform(_baseVertices.RightTop, transformMatrix);
+            Vertices.RightBottom = Vector3.Transform(_baseVertices.RightBottom, transformMatrix);
+            Vertices.LeftBottom = Vector3.Transform(_baseVertices.LeftBottom, transformMatrix);
+        }
+
+        public void TransformChanged(Matrix transformMatrix) => TransformVertices(transformMatrix);
     }
 }

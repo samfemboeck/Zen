@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Zen.Util;
 
 namespace Zen
 {
     public class SpriteAtlasData
 	{
 		public List<string> Names = new List<string>();
-		public List<Rectangle> SourceRects = new List<Rectangle>();
+		public List<RectangleF> SourceRects = new List<RectangleF>();
 		public List<Vector2> Origins = new List<Vector2>();
 		public List<string> AnimationNames = new List<string>();
 		public List<int> AnimationFps = new List<int>();

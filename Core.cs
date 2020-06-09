@@ -8,8 +8,7 @@ namespace Zen
     public abstract class Core : Game
     {
         public new static GraphicsDevice GraphicsDevice;
-        public static Zen.Batching.Batcher Batcher;
-        public static SpriteBatch SpriteBatch;
+        public static BuddhaBatcher Batcher;
         private Machine _machine;
         private TimerManager _timerManager = TimerManager.Instance;
 
@@ -23,7 +22,7 @@ namespace Zen
             }
         }
 
-        public Core(int width = 1920, int height = 1080, bool isFullScreen = false)
+        public Core(int width = 1600, int height = 1200, bool isFullScreen = false)
         {
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -41,17 +40,13 @@ namespace Zen
         protected override void Initialize()
         {
             GraphicsDevice = base.GraphicsDevice;
-            Batcher = new Zen.Batching.Batcher(GraphicsDevice);
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
-            Physics.Init(100);
+            Batcher = new BuddhaBatcher(GraphicsDevice);
+            //Physics.Init(100);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            Texture2D texture = Content.Load<Texture2D>("Mobs/Squid/circle");
-            PrimitiveRectangleTexture rectTexture = new PrimitiveRectangleTexture(GraphicsDevice, texture, new RectangleF(0, 0, 600, 600));
-            Renderer.RectTexture = rectTexture;
             Start();
         }
 
@@ -67,6 +62,8 @@ namespace Zen
             _timerManager.Update();
             
             Machine.Update();
+
+            System.Console.WriteLine(1 / Time.DeltaTime);
 
             base.Update(gameTime);
         }
