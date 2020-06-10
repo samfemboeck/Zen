@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Content;
 using Zen.Components;
 
 namespace Zen
@@ -11,8 +12,10 @@ namespace Zen
         List<Component> _components = new List<Component>();
         List<Component> _componentsToAdd = new List<Component>();
         List<Component> _componentsToRemove = new List<Component>();
+        List<Component> _tmpComponentList = new List<Component>();
         List<IDrawable> _drawables = new List<IDrawable>();
         List<IUpdatable> _updatables = new List<IUpdatable>();
+        ContentManager _content;
 
         public Entity(string name)
         {
@@ -56,16 +59,35 @@ namespace Zen
             {
                 foreach (Component component in _componentsToAdd)
                 {
-                    _components.Add(component);
+                    _tmpComponentList.Add(component);
+                    component.Entity = this;
+                }
+
+                foreach (Component component in _tmpComponentList)
+                {
+                    component.LoadComponents();
+                }
+
+                _tmpComponentList.Clear();
+
+                foreach (Component component in _componentsToAdd)
+                {
+                     _components.Add(component);
+                     _tmpComponentList.Add(component);
+                     component.Entity = this;
 
                     if (component is IUpdatable updatable)
                         _updatables.Add(updatable);
                     if (component is IDrawable drawable)
                         _drawables.Add(drawable);
-
-                    component.Register(this);
                 }
 
+                foreach (Component component in _tmpComponentList)
+                {
+                    component.Mount();
+                }
+
+                _tmpComponentList.Clear();
                 _componentsToAdd.Clear();
             }
         }
@@ -74,16 +96,6 @@ namespace Zen
         {
             _machine = machine;
             UpdateLists();
-            
-            foreach (Component component in _components)
-            {
-                component.PreMount();
-            }
-
-            foreach (Component component in _components)
-            {
-                component.Mount();
-            }
         }
 
         public void UnMount()

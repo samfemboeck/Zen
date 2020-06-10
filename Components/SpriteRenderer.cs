@@ -7,9 +7,10 @@ namespace Zen.Components
     public class SpriteRenderer : Component, IDrawable, ITransformObserver
     {
         public Color Color = Color.White;
-        Material IDrawable.Material { get => Material.Default; }
+        public Material Material;
+        Material IDrawable.Material { get => Material ?? Material.Default; }
         public SpriteEffects SpriteEffects { get; protected set; }
-        public Vector2 LocalOffset;
+        public Vector2 LocalOffset = Vector2.Zero;
         public Vertex4 Vertices;
         Vertex4 _baseVertices;
         Sprite _sprite;
@@ -27,9 +28,11 @@ namespace Zen.Components
             }
         }
 
-        public override void PreMount()
+        public override void Mount()
         {
-            GetComponent<Transform>().Origin = _sprite.Origin;
+            Transform transform = GetComponent<Transform>();
+            System.Diagnostics.Debug.Assert(transform != null, "No transform set for entity!");
+            transform.Origin = _sprite.Origin;
         }
 
         public SpriteRenderer(Sprite sprite)
@@ -41,17 +44,17 @@ namespace Zen.Components
 
         public virtual void Draw()
         {
-            Core.Batcher.PushQuad(Sprite.Texture2D, Sprite.UvRect, Vertices, Color);
+            Core.Batcher.PushQuad(Sprite, Vertices, Color);
         }
 
         void TransformVertices(Matrix transformMatrix)
         {
-            Vertices.LeftTop = Vector3.Transform(_baseVertices.LeftTop, transformMatrix);
-            Vertices.RightTop = Vector3.Transform(_baseVertices.RightTop, transformMatrix);
-            Vertices.RightBottom = Vector3.Transform(_baseVertices.RightBottom, transformMatrix);
-            Vertices.LeftBottom = Vector3.Transform(_baseVertices.LeftBottom, transformMatrix);
+            Vertices.LeftTop = Vector3.Transform(_baseVertices.LeftTop, transformMatrix) + new Vector3(LocalOffset, 0);
+            Vertices.RightTop = Vector3.Transform(_baseVertices.RightTop, transformMatrix) + new Vector3(LocalOffset, 0);
+            Vertices.RightBottom = Vector3.Transform(_baseVertices.RightBottom, transformMatrix) + new Vector3(LocalOffset, 0);
+            Vertices.LeftBottom = Vector3.Transform(_baseVertices.LeftBottom, transformMatrix) + new Vector3(LocalOffset, 0);
         }
 
-        public void TransformChanged(Matrix transformMatrix) => TransformVertices(transformMatrix);
+        public void TransformChanged(Transform transform) => TransformVertices(transform.TransformMatrix);
     }
 }

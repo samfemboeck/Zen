@@ -66,6 +66,13 @@ namespace Zen
             _entitiesToAdd.Add(entity);
         }
 
+        public Entity AddEntity(string name)
+        {
+            Entity entity = new Entity(name);
+            _entitiesToAdd.Add(entity);
+            return entity;
+        }
+
         public void RemoveEntity(Entity entity)
         {
             _entitiesToRemove.Add(entity);

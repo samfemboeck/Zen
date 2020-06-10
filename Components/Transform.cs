@@ -7,8 +7,9 @@ namespace Zen
 {
     public class Transform : Component, IUpdatable
     {
-        Matrix _transformMatrix;
+        public Matrix TransformMatrix;
         Matrix _originMatrix;
+        Matrix _flipMatrix;
         Matrix _scaleMatrix;
         Matrix _rotationMatrix;
         Matrix _translationMatrix;
@@ -22,6 +23,8 @@ namespace Zen
                 {
                     _scale = value;
                     _isScaleDirty = true;
+                    UpdateMatrix();
+                    NotifyObservers();
                 }
             }
         }
@@ -35,6 +38,8 @@ namespace Zen
                 {
                     _rotation = value;
                     _isRotationDirty = true;
+                    UpdateMatrix();
+                    NotifyObservers();
                 }
             }
         }
@@ -48,6 +53,8 @@ namespace Zen
                 {
                     _position = value;
                     _isPositionDirty = true;
+                    UpdateMatrix();
+                    NotifyObservers();
                 }
             }
         }
@@ -61,6 +68,8 @@ namespace Zen
                 {
                     _origin = value;
                     _isOriginDirty = true;
+                    UpdateMatrix();
+                    NotifyObservers();
                 }
             }
         }
@@ -74,6 +83,8 @@ namespace Zen
                 {
                     _flipX = value;
                     _isFlipDirty = true;
+                    UpdateMatrix();
+                    NotifyObservers();
                 }
             }
         }
@@ -102,7 +113,7 @@ namespace Zen
         bool _isRotationDirty = true;
         bool _isPositionDirty = true;
         bool _isOriginDirty = true;
-        bool _isFlipDirty = false; // TODO
+        bool _isFlipDirty = true;
 
         List<ITransformObserver> observers = new List<ITransformObserver>();
 
@@ -113,7 +124,7 @@ namespace Zen
             Rotation = sign * Mathf.Acos(Vector2.Dot(vectorToAlignTo, Vector2.UnitY));
         }
 
-        public override void PreMount()
+        public override void Mount()
         {
             foreach (Component component in Entity.GetComponents())
             {
@@ -122,11 +133,9 @@ namespace Zen
                     observers.Add(observer);
                 }
             }
-        }
 
-        public override void Mount()
-        {
             UpdateMatrix();
+            NotifyObservers();
         }
 
         void UpdateMatrix()
@@ -135,6 +144,17 @@ namespace Zen
             {
                 _originMatrix = Matrix.CreateTranslation(-Origin.X, -Origin.Y, 0);
                 _isOriginDirty = false;
+            }
+
+            if (_isFlipDirty)
+            {
+                _flipMatrix = new Matrix(
+                    _flipX ? -1 : 1, 0, 0, 0,
+                    0, _flipY ? -1 : 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                );
+                _isFlipDirty = false;
             }
 
             if (_isScaleDirty)
@@ -155,10 +175,13 @@ namespace Zen
                 _isPositionDirty = false;
             }
 
-            _transformMatrix = _originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix;
+            TransformMatrix = _originMatrix * _flipMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix;
+        }
 
+        void NotifyObservers()
+        {
             foreach (ITransformObserver observer in observers)
-                observer.TransformChanged(_transformMatrix);
+                observer.TransformChanged(this);
         }
 
         public void Update()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Zen.Util;
@@ -62,8 +63,6 @@ namespace Zen
             _timerManager.Update();
             
             Machine.Update();
-
-            System.Console.WriteLine(1 / Time.DeltaTime);
 
             base.Update(gameTime);
         }

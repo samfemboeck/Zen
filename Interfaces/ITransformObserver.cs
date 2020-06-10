@@ -4,6 +4,6 @@ namespace Zen
 {
     public interface ITransformObserver
     {
-        void TransformChanged(Matrix transformMatrix);
+        void TransformChanged(Transform transform);
     }
 }
