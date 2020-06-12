@@ -8,7 +8,6 @@ namespace Zen
     public class Entity
     {
         public string Name;
-        Machine _machine;
         List<Component> _components = new List<Component>();
         List<Component> _componentsToAdd = new List<Component>();
         List<Component> _componentsToRemove = new List<Component>();
@@ -16,6 +15,8 @@ namespace Zen
         List<IDrawable> _drawables = new List<IDrawable>();
         List<IUpdatable> _updatables = new List<IUpdatable>();
         ContentManager _content;
+
+        public List<IDrawable> Drawables => _drawables;
 
         public Entity(string name)
         {
@@ -40,16 +41,14 @@ namespace Zen
         {
             if (_componentsToRemove.Count > 0)
             {
-                foreach (Component component in _componentsToRemove)
+                for(int i = _componentsToRemove.Count - 1; i >= 0; i--)
                 {
-                    _components.Remove(component);
+                    _components.Remove(_componentsToRemove[i]);
 
-                    if (component is IUpdatable updatable)
+                    if (_componentsToRemove[i] is IUpdatable updatable)
                         _updatables.Remove(updatable);
-                    if (component is IDrawable drawable)
+                    if (_componentsToRemove[i] is IDrawable drawable)
                         _drawables.Remove(drawable);
-
-                    component.Destroy();
                 }
 
                 _componentsToRemove.Clear();
@@ -65,7 +64,7 @@ namespace Zen
 
                 foreach (Component component in _tmpComponentList)
                 {
-                    component.LoadComponents();
+                    component.AddComponents();
                 }
 
                 _tmpComponentList.Clear();
@@ -84,7 +83,12 @@ namespace Zen
 
                 foreach (Component component in _tmpComponentList)
                 {
-                    component.Mount();
+                    component.Awake();
+                }
+
+                foreach (Component component in _tmpComponentList)
+                {
+                    component.Start();
                 }
 
                 _tmpComponentList.Clear();
@@ -92,20 +96,20 @@ namespace Zen
             }
         }
 
-        public void Mount(Machine machine)
+        public void OnAdd()
         {
-            _machine = machine;
             UpdateLists();
         }
 
-        public void UnMount()
+        public void OnDestroy()
         {
-            _machine = null;
         }
 
         public void AddComponent(Component component)
         {
             _componentsToAdd.Add(component);
+            component.Entity = this;
+            component.OnAddedToEntity();
         }
 
         public T AddComponent<T>() where T : Component, new()
@@ -135,14 +139,5 @@ namespace Zen
         {
             return _components;
         }
-
-        public void UpdateTransform()
-        {
-
-        }
-
-        public List<IDrawable> Drawables { get => _drawables; }
-
-        public virtual void OnDestroy() { }
     }
 }

@@ -20,8 +20,6 @@ namespace Zen
         const int MaxIndices = MaxSprites * 6;
         int _numSprites;
 
-        Texture2D _curTexture;
-
         public VertexBufferManager(GraphicsDevice graphicsDevice)
         {
             _graphicsDevice = graphicsDevice;
@@ -59,25 +57,18 @@ namespace Zen
 
         public void Flush()
         {
+            if (_numSprites == 0)
+                return;
+                
             _vertexBuffer.SetData(0, _vertexPreBuffer, 0, _numSprites, VertexPositionColorTexture4.RealStride, SetDataOptions.None);
             _graphicsDevice.SetVertexBuffer(_vertexBuffer);
             _graphicsDevice.Indices = _indexBuffer;
 
-            int offset = 0;
-            _curTexture = _textureBuffer[0];
-            for (int i = 1; i < _numSprites; i++)
+            for (int i = 0; i < _numSprites; i++)
             {
-                if (_textureBuffer[i] != _curTexture)
-                {
-                    _graphicsDevice.Textures[0] = _curTexture;
-                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, offset * 4, 0, 2);
-                    _curTexture = _textureBuffer[i];
-                    offset = i;
-                }
+                _graphicsDevice.Textures[0] = _textureBuffer[i];
+                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, i * 4, 0, 2);
             }
-
-            _graphicsDevice.Textures[0] = _curTexture;
-            _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, offset * 4, 0, 2);
 
             _numSprites = 0;
         }

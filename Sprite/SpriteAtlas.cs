@@ -6,7 +6,6 @@ namespace Zen
     {
         public string[] Names;
         public Sprite[] Sprites;
-
         public string[] AnimationNames;
         public SpriteAnimation[] SpriteAnimations;
 
@@ -27,7 +26,7 @@ namespace Zen
             // all our Sprites use the same Texture so we only need to dispose one of them
             if (Sprites != null)
             {
-                Sprites[0].Texture2D.Dispose();
+                Sprites[0].Texture.Dispose();
                 Sprites = null;
             }
         }

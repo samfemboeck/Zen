@@ -5,5 +5,6 @@ namespace Zen
     public interface ITransformObserver
     {
         void TransformChanged(Transform transform);
+        void TransformInitialized(Transform transform);
     }
 }

@@ -7,7 +7,7 @@ public class Mover : Component, IUpdatable
     public Vector2 Velocity = Vector2.Zero;
     Transform _transform;
 
-    public override void Mount()
+    public override void Awake()
     {
         _transform = GetComponent<Transform>();
     }

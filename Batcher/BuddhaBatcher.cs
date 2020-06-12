@@ -43,27 +43,75 @@ namespace Zen
             _vertexBufferManager.Flush();
         }
 
-        public void PushQuad(Sprite sprite, Vertex4 vertices, Color color)
+        public void PushQuad(Texture2D texture, RectangleF uvRectNormalized, Vector2 leftTop, Vector2 rightTop, Vector2 rightBottom, Vector2 leftBottom, Color color)
         {
-            
             var spriteData = new VertexBufferManager.VertexPositionColorTexture4();
 
-            spriteData.Position0 = vertices.LeftTop;
-            spriteData.Position1 = vertices.RightTop;
-            spriteData.Position2 = vertices.RightBottom;
-            spriteData.Position3 = vertices.LeftBottom;
+            spriteData.Position0 = new Vector3(leftTop, 0);
+            spriteData.Position1 = new Vector3(rightTop, 0);
+            spriteData.Position2 = new Vector3(rightBottom, 0);
+            spriteData.Position3 = new Vector3(leftBottom, 0);
 
-            spriteData.TextureCoordinate0 = new Vector2(sprite.UvRect.X, sprite.UvRect.Y);
-            spriteData.TextureCoordinate1 = new Vector2(sprite.UvRect.Max.X, sprite.UvRect.Y);
-            spriteData.TextureCoordinate2 = new Vector2(sprite.UvRect.Max.X, sprite.UvRect.Max.Y);
-            spriteData.TextureCoordinate3 = new Vector2(sprite.UvRect.X, sprite.UvRect.Max.Y);
+            spriteData.TextureCoordinate0 = new Vector2(uvRectNormalized.X, uvRectNormalized.Y);
+            spriteData.TextureCoordinate1 = new Vector2(uvRectNormalized.Max.X, uvRectNormalized.Y);
+            spriteData.TextureCoordinate2 = new Vector2(uvRectNormalized.Max.X, uvRectNormalized.Max.Y);
+            spriteData.TextureCoordinate3 = new Vector2(uvRectNormalized.X, uvRectNormalized.Max.Y);
 
             spriteData.Color0 = color;
             spriteData.Color1 = color;
             spriteData.Color2 = color;
             spriteData.Color3 = color;
 
-            _vertexBufferManager.PushSprite(spriteData, sprite.Texture2D);
+            _vertexBufferManager.PushSprite(spriteData, texture);
+        }
+
+        public void PushQuad(Texture2D texture, RectangleF uvRectNormalized, RectangleF targetRectangle, Matrix transformMatrix, Color color)
+        {
+            var spriteData = new VertexBufferManager.VertexPositionColorTexture4();
+
+            spriteData.Position0 = Vector3.Transform(new Vector3(targetRectangle.Left, targetRectangle.Top, 0), transformMatrix);
+            spriteData.Position1 = Vector3.Transform(new Vector3(targetRectangle.Right, targetRectangle.Top, 0), transformMatrix);
+            spriteData.Position2 = Vector3.Transform(new Vector3(targetRectangle.Right, targetRectangle.Bottom, 0), transformMatrix);
+            spriteData.Position3 = Vector3.Transform(new Vector3(targetRectangle.Left, targetRectangle.Bottom, 0), transformMatrix);
+
+            spriteData.TextureCoordinate0 = new Vector2(uvRectNormalized.X, uvRectNormalized.Y);
+            spriteData.TextureCoordinate1 = new Vector2(uvRectNormalized.Max.X, uvRectNormalized.Y);
+            spriteData.TextureCoordinate2 = new Vector2(uvRectNormalized.Max.X, uvRectNormalized.Max.Y);
+            spriteData.TextureCoordinate3 = new Vector2(uvRectNormalized.X, uvRectNormalized.Max.Y);
+
+            spriteData.Color0 = color;
+            spriteData.Color1 = color;
+            spriteData.Color2 = color;
+            spriteData.Color3 = color;
+
+            _vertexBufferManager.PushSprite(spriteData, texture);
+        }
+
+        public void PushQuad(Texture2D texture, RectangleF uvRectNormalized, RectangleF targetRectangle, Vector2 position, Vector2 origin, float rotation, float scale, Flip flip, Color color)
+        {
+            Matrix transformMatrix = Matrix.Identity;
+            
+            if (origin != Vector2.Zero)
+                transformMatrix *= Matrix.CreateTranslation(-origin.X, -origin.Y, 0);
+
+            if (scale != 1)
+                transformMatrix *= Matrix.CreateScale(scale);
+
+            if (flip != Flip.None)
+                transformMatrix *= new Matrix(
+                    flip == Flip.X || flip == Flip.XY ? -1 : 1, 0, 0, 0,
+                    0, flip == Flip.Y || flip == Flip.XY ? -1 : 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                );
+
+            if (!Mathf.WithinEpsilon(rotation))
+                transformMatrix *= Matrix.CreateRotationZ(rotation);
+
+            if (position != Vector2.Zero)
+                transformMatrix *= Matrix.CreateTranslation(position.X, position.Y, 0);
+
+            PushQuad(texture, uvRectNormalized, targetRectangle, transformMatrix, color);
         }
     }
 }

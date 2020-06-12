@@ -34,13 +34,10 @@ namespace Zen
             get => _rotation;
             set
             {
-                if (value != _rotation)
-                {
-                    _rotation = value;
-                    _isRotationDirty = true;
-                    UpdateMatrix();
-                    NotifyObservers();
-                }
+                _rotation = value;
+                _isRotationDirty = true;
+                UpdateMatrix();
+                NotifyObservers();
             }
         }
 
@@ -74,30 +71,17 @@ namespace Zen
             }
         }
 
-        public bool FlipX
+        public Flip Flip
         {
-            get => _flipX;
+            get => _flip;
             set
             {
-                if (value != _flipX)
+                if (value != _flip)
                 {
-                    _flipX = value;
+                    _flip = value;
                     _isFlipDirty = true;
                     UpdateMatrix();
                     NotifyObservers();
-                }
-            }
-        }
-
-        public bool FlipY
-        {
-            get => _flipY;
-            set
-            {
-                if (value != _flipY)
-                {
-                    _flipY = value;
-                    _isFlipDirty = true;
                 }
             }
         }
@@ -106,8 +90,7 @@ namespace Zen
         float _rotation;
         Vector2 _position;
         Vector2 _origin;
-        bool _flipX;
-        bool _flipY;
+        Flip _flip;
 
         bool _isScaleDirty = true;
         bool _isRotationDirty = true;
@@ -124,7 +107,7 @@ namespace Zen
             Rotation = sign * Mathf.Acos(Vector2.Dot(vectorToAlignTo, Vector2.UnitY));
         }
 
-        public override void Mount()
+        public override void Awake()
         {
             foreach (Component component in Entity.GetComponents())
             {
@@ -133,9 +116,14 @@ namespace Zen
                     observers.Add(observer);
                 }
             }
+        }
 
+        public override void Start()
+        {
             UpdateMatrix();
-            NotifyObservers();
+            
+            foreach (ITransformObserver observer in observers)
+                observer.TransformInitialized(this);
         }
 
         void UpdateMatrix()
@@ -149,8 +137,8 @@ namespace Zen
             if (_isFlipDirty)
             {
                 _flipMatrix = new Matrix(
-                    _flipX ? -1 : 1, 0, 0, 0,
-                    0, _flipY ? -1 : 1, 0, 0,
+                    _flip == Flip.X || Flip == Flip.XY ? -1 : 1, 0, 0, 0,
+                    0, _flip == Flip.Y || Flip == Flip.XY ? -1 : 1, 0, 0,
                     0, 0, 1, 0,
                     0, 0, 0, 1
                 );

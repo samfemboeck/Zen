@@ -20,7 +20,6 @@ namespace Zen.Components
         string _currentAnimationName;
         bool _animationActive;
 
-
         public SpriteAnimator(SpriteAtlas atlas)
         {
             _atlas = atlas;
@@ -29,14 +28,14 @@ namespace Zen.Components
                 _animations.Add(atlas.AnimationNames[i], atlas.SpriteAnimations[i]);
 
             CurrentAnimation = _animations[atlas.AnimationNames[0]];
-            Sprite = CurrentAnimation.Sprites[0];
+            SetSprite(CurrentAnimation.Sprites[0]);
         }
 
         public void Play(string name, LoopMode? loopMode = null)
         {
             _animationActive = true;
             CurrentAnimation = _animations[name];
-            Sprite = CurrentAnimation.Sprites[0];
+            SetSprite(CurrentAnimation.Sprites[0]);
             _elapsedTime = 0;
             _loopMode = loopMode ?? LoopMode.Loop;
             _currentAnimationName = name;
@@ -65,8 +64,8 @@ namespace Zen.Components
                 return;
             }
 
-            int currentFrame = (int)(_elapsedTime / secondsPerFrame);
-            Sprite = CurrentAnimation.Sprites[currentFrame];
+            CurrentAnimation.CurrentFrame = (int)(_elapsedTime / secondsPerFrame);
+            SetSprite(CurrentAnimation.Sprites[CurrentAnimation.CurrentFrame]);
         }
     }
 }

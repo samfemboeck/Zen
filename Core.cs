@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Zen.Util;
@@ -10,18 +9,7 @@ namespace Zen
     {
         public new static GraphicsDevice GraphicsDevice;
         public static BuddhaBatcher Batcher;
-        private Machine _machine;
-        private TimerManager _timerManager = TimerManager.Instance;
-
-        protected Machine Machine
-        {
-            get => _machine;
-            set
-            {
-                _machine = value;
-                _machine.Init(this);
-            }
-        }
+        public IRenderer Renderer { get; protected set; }
 
         public Core(int width = 1600, int height = 1200, bool isFullScreen = false)
         {
@@ -42,16 +30,12 @@ namespace Zen
         {
             GraphicsDevice = base.GraphicsDevice;
             Batcher = new BuddhaBatcher(GraphicsDevice);
-            //Physics.Init(100);
+            Renderer = new DefaultRenderer();
+            ContentLoader.Init(Content);
+            Physics.Init(200);
+
             base.Initialize();
         }
-
-        protected override void LoadContent()
-        {
-            Start();
-        }
-
-        public abstract void Start();
 
         protected override void Update(GameTime gameTime)
         {
@@ -59,10 +43,8 @@ namespace Zen
                 Exit();
 
             Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-            
-            _timerManager.Update();
-            
-            Machine.Update();
+            TimerManager.Update();
+            EntityManager.Update();
 
             base.Update(gameTime);
         }
@@ -70,7 +52,9 @@ namespace Zen
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            Machine.Draw();
+            
+            Renderer.Draw();
+
             base.Draw(gameTime);
         }
     }

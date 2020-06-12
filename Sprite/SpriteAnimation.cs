@@ -4,6 +4,7 @@ namespace Zen
 	{
 		public readonly Sprite[] Sprites;
 		public readonly float FrameRate;
+		public int CurrentFrame;
 
 		public SpriteAnimation(Sprite[] sprites, float frameRate)
 		{

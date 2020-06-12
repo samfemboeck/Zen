@@ -1,8 +1,6 @@
-/*namespace Zen
+namespace Zen
 {
-    using System;
     using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
     using Microsoft.Xna.Framework;
     using Zen.Util;
 
@@ -50,9 +48,9 @@
             return cell;
         }
 
-        public void Register(Collider collider)
+        public void Add(Collider collider)
         {
-            var bounds = collider.Bounds;
+            var bounds = collider.BroadphaseBounds;
             var p1 = CellCoords(bounds.X, bounds.Y);
             var p2 = CellCoords(bounds.Right, bounds.Bottom);
 
@@ -74,9 +72,9 @@
             }
         }
 
-        public void Remove(Collider collider)
+        public void RemoveWithinBounds(Collider collider)
         {
-            RectangleF bounds = collider.Bounds;
+            RectangleF bounds = collider.BroadphaseBounds;
             var p1 = CellCoords(bounds.X, bounds.Y);
             var p2 = CellCoords(bounds.Right, bounds.Bottom);
 
@@ -92,12 +90,14 @@
             }
         }
 
-        public HashSet<Collider> AabbBroadphase(ref RectangleF bounds, Collider excludeCollider, int layerMask)
+        public void RemoveBruteForce(Collider collider) => _cellDict.Remove(collider);
+
+        public bool BoxCast(RectangleF box, Collider excludeCollider, out HashSet<Collider> colliders, int collisionLayer = 0)
         {
             _tempHashset.Clear();
 
-            var p1 = CellCoords(bounds.X, bounds.Y);
-            var p2 = CellCoords(bounds.Right, bounds.Bottom);
+            var p1 = CellCoords(box.X, box.Y);
+            var p2 = CellCoords(box.Right, box.Bottom);
 
             for (var x = p1.X; x <= p2.X; x++)
             {
@@ -116,13 +116,17 @@
                         if (collider == excludeCollider)
                             continue;
 
-                        if (bounds.Intersects(collider.Bounds))
+                        if (collisionLayer != 0 && !collider.CollisionLayer.HasFlag((CollisionLayer)collisionLayer))
+                            continue;
+
+                        if (box.Intersects(collider.BroadphaseBounds))
                             _tempHashset.Add(collider);
                     }
                 }
             }
 
-            return _tempHashset;
+            colliders = _tempHashset;
+            return _tempHashset.Count > 0;
         }
 
         class IntIntDictionary
@@ -154,4 +158,4 @@
             }
         }
     }
-}*/
+}

@@ -9,15 +9,14 @@ namespace Zen.Components
 
         protected void AddComponent(Component component) => Entity.AddComponent(component);
 
-        public virtual void Register(Entity entity) 
-        {
-            Entity = entity;
-        }
+        public virtual void OnAddedToEntity() {}
 
-        public virtual void LoadComponents() {}
+        public virtual void AddComponents() {}
 
-        public virtual void Mount() {}
+        public virtual void Awake() {}
 
-        public virtual void Destroy() {}
+        public virtual void Start() {}
+
+        public virtual void Destroy() => Entity.RemoveComponent(this);
     }
 }

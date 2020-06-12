@@ -21,7 +21,7 @@ namespace Zen
 			atlas.Sprites = new Sprite[atlas.Names.Length];
 
 			for (var i = 0; i < atlas.Sprites.Length; i++)
-				atlas.Sprites[i] = new Sprite(texture, SourceRects[i], Origins[i]);
+				atlas.Sprites[i] = new Sprite(texture, SourceRects[i]);
 
 			atlas.AnimationNames = AnimationNames.ToArray();
 			atlas.SpriteAnimations = new SpriteAnimation[atlas.AnimationNames.Length];

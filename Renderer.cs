@@ -6,16 +6,15 @@ using Zen.Util;
 
 namespace Zen
 {
-    public class Renderer
+    public class DefaultRenderer : IRenderer
     {
         Material _curMaterial = Material.Default;
 
-        public void Draw(HashSet<Entity> entities)
+        public void Draw()
         {
-
             Core.Batcher.Begin();
 
-            foreach (Entity entity in entities)
+            foreach (Entity entity in EntityManager.Entities)
             {
                 foreach (IDrawable drawable in entity.Drawables)
                 {
@@ -30,5 +29,7 @@ namespace Zen
             }
             Core.Batcher.End();
         }
+
+        public void Init() {}
     }
 }
