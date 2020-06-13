@@ -81,6 +81,8 @@ namespace Zen
                         _drawables.Add(drawable);
                 }
 
+                _componentsToAdd.Clear();
+
                 foreach (Component component in _tmpComponentList)
                 {
                     component.Awake();
@@ -92,17 +94,20 @@ namespace Zen
                 }
 
                 _tmpComponentList.Clear();
-                _componentsToAdd.Clear();
             }
         }
 
-        public void OnAdd()
+        public void OnAddedToManager()
         {
             UpdateLists();
         }
 
         public void OnDestroy()
         {
+            foreach (Component component in _components)
+            {
+                component.OnDestroy();
+            }
         }
 
         public void AddComponent(Component component)

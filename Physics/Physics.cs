@@ -13,7 +13,7 @@ namespace Zen
 
         public static void Add(Collider collider) => _spatialHash.Add(collider);
 
-        public static void RemoveWithinBounds(Collider collider) => _spatialHash.RemoveWithinBounds(collider);
+        public static void Remove(Collider collider) => _spatialHash.RemoveRegisteredBounds(collider);
 
         public static void RemoveBruteForce(Collider collider) => _spatialHash.RemoveBruteForce(collider);
 

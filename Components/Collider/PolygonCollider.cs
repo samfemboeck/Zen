@@ -9,68 +9,56 @@ namespace Zen
 {
     public class PolygonCollider : Collider, ITransformObserver, IDrawable
     {
-        public Vector2[] Vertices;
+        Matrix _curTransformMatrix;
         Vector2[] _originalVertices;
+        Vector2[] _vertices;
+        bool _areVerticesLive;
+        bool _areVerticesInitalized = false;
 
-        public Vector2[] LeftNormals
+        public Vector2[] Vertices
         {
             get
             {
-                if (_areLeftNormalsDirty)
+                if (!_areVerticesLive)
                 {
-                    _leftNormals = Polygon.GetLeftNormals(Vertices);
-                    _areLeftNormalsDirty = false;
-                }
-                
-                return _leftNormals;
-            }
-        }
-        Vector2[] _leftNormals;
-        bool _areLeftNormalsDirty = true;
-
-        public Vector2 Center
-        {
-            get
-            {
-                if (_isCenterDirty)
-                {
-                    _center = Polygon.GetCenter(Vertices);
-                    _isCenterDirty = false;
+                    Polygon.TransformVertices(_originalVertices, _vertices, _curTransformMatrix);
                 }
 
-                return _center;
+                return _vertices;
             }
         }
-        Vector2 _center;
-        bool _isCenterDirty;
+
+        // cached for Collision Detection
+        public Vector2[] LeftNormals;
+        public Vector2 Center;
 
         public override RectangleF BroadphaseBounds
         {
             get
             {
-                if (_areBroadphaseBoundsDirty)
+                if (!_areVerticesLive)
                 {
                     _broadphaseBounds = Polygon.GetSurroundingRectangle(Vertices);
-                    _areBroadphaseBoundsDirty = false;
                 }
 
                 return _broadphaseBounds;
             }
         }
         RectangleF _broadphaseBounds;
-        bool _areBroadphaseBoundsDirty = true;
 
         public Material Material => Material.Default;
 
         Texture2D _debugRectangle;
         RectangleF _debugRectangleUv = new RectangleF(0, 0, 1, 1);
 
-        bool _areVerticesInitalized;
-
         public PolygonCollider(Vector2[] vertices) : this()
         {
+            _originalVertices = new Vector2[vertices.Length];
+            _vertices = new Vector2[vertices.Length];
+
             Array.Copy(vertices, _originalVertices, vertices.Length);
             Array.Copy(vertices, Vertices, vertices.Length);
+
             _areVerticesInitalized = true;
         }
 
@@ -81,25 +69,17 @@ namespace Zen
 
         public void TransformChanged(Transform transform)
         {
-            Physics.RemoveWithinBounds(this);
-
-            Polygon.TransformVertices(_originalVertices, Vertices, transform.TransformMatrix);
-            _areBroadphaseBoundsDirty = true;
-            _isCenterDirty = true;
-            _areLeftNormalsDirty = true;
-
+            Physics.Remove(this);
             Physics.Add(this);
         }
 
-        public override bool Intersects(Collider other)
+        /*public override bool Intersects(Collider other)
         {
             if (other is PolygonCollider polygonCollider)
                 return Polygon.IntersectsPolygon(Vertices, LeftNormals, polygonCollider.Vertices, polygonCollider.LeftNormals);
             else if (other is CircleCollider circleCollider)
-                return Polygon.IntersectsCircle(Vertices, Center, circleCollider.Center, circleCollider.Radius);
-
-            return false;
-        }
+                return false;
+        }*/
 
         public void TransformInitialized(Transform transform)
         {
@@ -116,7 +96,7 @@ namespace Zen
                     new Vector2(targetRectangle.Left, targetRectangle.Bottom)
                  };
 
-                 Vertices = new Vector2[_originalVertices.Length];
+                 //Vertices = new Vector2[_originalVertices.Length];
                  Array.Copy(_originalVertices, Vertices, _originalVertices.Length);
                 _areVerticesInitalized = true;
             }

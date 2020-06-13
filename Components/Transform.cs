@@ -5,98 +5,158 @@ using Zen.Util;
 
 namespace Zen
 {
-    public class Transform : Component, IUpdatable
+    public class Transform : Component
     {
-        public Matrix TransformMatrix;
-        Matrix _originMatrix;
-        Matrix _flipMatrix;
-        Matrix _scaleMatrix;
-        Matrix _rotationMatrix;
-        Matrix _translationMatrix;
+        public Matrix TransformMatrix => OriginMatrix * FlipMatrix * ScaleMatrix * RotationMatrix * TranslationMatrix;
+
+        public Matrix OriginMatrix
+        {
+            get
+            {
+                if (isOriginMatrixDirty)
+                {
+                    originMatrix = Matrix.CreateTranslation(-Origin.X, -Origin.Y, 0);
+                    isOriginMatrixDirty = false;
+                }
+
+                return originMatrix;
+            }
+        }
+
+        public Matrix FlipMatrix
+        {
+            get
+            {
+                if (isFlipMatrixDirty)
+                {
+                    flipMatrix = new Matrix(
+                        flip == Flip.X || Flip == Flip.XY ? -1 : 1, 0, 0, 0,
+                        0, flip == Flip.Y || Flip == Flip.XY ? -1 : 1, 0, 0,
+                        0, 0, 1, 0,
+                        0, 0, 0, 1
+                    );
+                    isFlipMatrixDirty = false;
+                }
+
+                return flipMatrix;
+            }
+        }
+
+        public Matrix ScaleMatrix
+        {
+            get
+            {
+                if (isScaleMatrixDirty)
+                {
+                    scaleMatrix = Matrix.CreateScale(scale);
+                    isScaleMatrixDirty = false;
+                }
+
+                return scaleMatrix;
+            }
+        }
+
+        public Matrix RotationMatrix
+        {
+            get
+            {
+                if (isRotationMatrixDirty)
+                {
+                    rotationMatrix = Matrix.CreateRotationZ(rotation);
+                    isRotationMatrixDirty = false;
+                }
+
+                return rotationMatrix;
+            }
+        }
+
+        public Matrix TranslationMatrix
+        {
+            get
+            {
+                if (isTranslationMatrixDirty)
+                {
+                    translationMatrix = Matrix.CreateTranslation(position.X, position.Y, 0);
+                    isTranslationMatrixDirty = false;
+                }
+
+                return translationMatrix;
+            }
+        }
+
+        Matrix transformMatrix;
+        Matrix originMatrix;
+        Matrix flipMatrix;
+        Matrix scaleMatrix;
+        Matrix rotationMatrix;
+        Matrix translationMatrix;
+
+        bool isOriginMatrixDirty = true;
+        bool isFlipMatrixDirty = true;
+        bool isScaleMatrixDirty = true;
+        bool isRotationMatrixDirty = true;
+        bool isTranslationMatrixDirty = true;
 
         public float Scale
         {
-            get => _scale;
+            get => scale;
             set
             {
-                if (value != _scale)
-                {
-                    _scale = value;
-                    _isScaleDirty = true;
-                    UpdateMatrix();
-                    NotifyObservers();
-                }
+                scale = value;
+                isScaleMatrixDirty = true;
+                NotifyObservers();
             }
         }
 
         public float Rotation
         {
-            get => _rotation;
+            get => rotation;
             set
             {
-                _rotation = value;
-                _isRotationDirty = true;
-                UpdateMatrix();
+                rotation = value;
+                isRotationMatrixDirty = true;
                 NotifyObservers();
             }
         }
 
         public Vector2 Position
         {
-            get => _position;
+            get => position;
             set
             {
-                if (value != _position)
-                {
-                    _position = value;
-                    _isPositionDirty = true;
-                    UpdateMatrix();
-                    NotifyObservers();
-                }
+                position = value;
+                isTranslationMatrixDirty = true;
+                NotifyObservers();
             }
         }
 
         public Vector2 Origin
         {
-            get => _origin;
+            get => origin;
             set
             {
-                if (value != _origin)
-                {
-                    _origin = value;
-                    _isOriginDirty = true;
-                    UpdateMatrix();
-                    NotifyObservers();
-                }
+                origin = value;
+                isOriginMatrixDirty = true;
+                NotifyObservers();
             }
         }
 
         public Flip Flip
         {
-            get => _flip;
+            get => flip;
             set
             {
-                if (value != _flip)
-                {
-                    _flip = value;
-                    _isFlipDirty = true;
-                    UpdateMatrix();
-                    NotifyObservers();
-                }
+                flip = value;
+                isFlipMatrixDirty = true;
+                NotifyObservers();
             }
         }
 
-        float _scale = 1;
-        float _rotation;
-        Vector2 _position;
-        Vector2 _origin;
-        Flip _flip;
-
-        bool _isScaleDirty = true;
-        bool _isRotationDirty = true;
-        bool _isPositionDirty = true;
-        bool _isOriginDirty = true;
-        bool _isFlipDirty = true;
+        float scale = 1;
+        float rotation;
+        Vector2 position;
+        Vector2 origin;
+        Flip flip;
 
         List<ITransformObserver> observers = new List<ITransformObserver>();
 
@@ -118,64 +178,10 @@ namespace Zen
             }
         }
 
-        public override void Start()
-        {
-            UpdateMatrix();
-            
-            foreach (ITransformObserver observer in observers)
-                observer.TransformInitialized(this);
-        }
-
-        void UpdateMatrix()
-        {
-            if (_isOriginDirty)
-            {
-                _originMatrix = Matrix.CreateTranslation(-Origin.X, -Origin.Y, 0);
-                _isOriginDirty = false;
-            }
-
-            if (_isFlipDirty)
-            {
-                _flipMatrix = new Matrix(
-                    _flip == Flip.X || Flip == Flip.XY ? -1 : 1, 0, 0, 0,
-                    0, _flip == Flip.Y || Flip == Flip.XY ? -1 : 1, 0, 0,
-                    0, 0, 1, 0,
-                    0, 0, 0, 1
-                );
-                _isFlipDirty = false;
-            }
-
-            if (_isScaleDirty)
-            {
-                _scaleMatrix = Matrix.CreateScale(_scale);
-                _isScaleDirty = false;
-            }
-
-            if (_isRotationDirty)
-            {
-                _rotationMatrix = Matrix.CreateRotationZ(_rotation);
-                _isRotationDirty = false;
-            }
-
-            if (_isPositionDirty)
-            {
-                _translationMatrix = Matrix.CreateTranslation(_position.X, _position.Y, 0);
-                _isPositionDirty = false;
-            }
-
-            TransformMatrix = _originMatrix * _flipMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix;
-        }
-
         void NotifyObservers()
         {
             foreach (ITransformObserver observer in observers)
                 observer.TransformChanged(this);
-        }
-
-        public void Update()
-        {
-            if (_isOriginDirty || _isScaleDirty || _isRotationDirty || _isPositionDirty || _isFlipDirty)
-                UpdateMatrix();
         }
     }
 }

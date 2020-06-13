@@ -51,6 +51,7 @@ namespace Zen
         public void Add(Collider collider)
         {
             var bounds = collider.BroadphaseBounds;
+            collider.RegisteredBroadphaseBounds = bounds;
             var p1 = CellCoords(bounds.X, bounds.Y);
             var p2 = CellCoords(bounds.Right, bounds.Bottom);
 
@@ -72,9 +73,9 @@ namespace Zen
             }
         }
 
-        public void RemoveWithinBounds(Collider collider)
+        public void RemoveRegisteredBounds(Collider collider)
         {
-            RectangleF bounds = collider.BroadphaseBounds;
+            RectangleF bounds = collider.RegisteredBroadphaseBounds;
             var p1 = CellCoords(bounds.X, bounds.Y);
             var p2 = CellCoords(bounds.Right, bounds.Bottom);
 
@@ -82,7 +83,6 @@ namespace Zen
             {
                 for (var y = p1.Y; y <= p2.Y; y++)
                 {
-                    // the cell should always exist since this collider should be in all queryed cells
                     var cell = CellAtPosition(x, y);
                     if (cell != null)
                         cell.Remove(collider);

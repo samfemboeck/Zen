@@ -85,6 +85,8 @@ namespace Zen.Util
             return !(a == b);
         }
 
+        public static implicit operator Rectangle(RectangleF rectangle) => new Rectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
+
         public override string ToString()
         {
             return string.Format("X:{0}, Y:{1}, Width: {2}, Height: {3}", X, Y, Width, Height);

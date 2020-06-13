@@ -36,7 +36,7 @@ namespace Zen
                 foreach (Entity entity in _entitiesToAdd)
                 {
                     _entities.Add(entity);
-                    entity.OnAdd();
+                    entity.OnAddedToManager();
                 }
 
                 _entitiesToAdd.Clear();

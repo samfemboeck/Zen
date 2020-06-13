@@ -9,6 +9,7 @@ namespace Zen
     {
         public new static GraphicsDevice GraphicsDevice;
         public static BuddhaBatcher Batcher;
+        public static SpriteBatch SpriteBatch;
         public IRenderer Renderer { get; protected set; }
 
         public Core(int width = 1600, int height = 1200, bool isFullScreen = false)
@@ -30,6 +31,7 @@ namespace Zen
         {
             GraphicsDevice = base.GraphicsDevice;
             Batcher = new BuddhaBatcher(GraphicsDevice);
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
             Renderer = new DefaultRenderer();
             ContentLoader.Init(Content);
             Physics.Init(200);
@@ -51,7 +53,7 @@ namespace Zen
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             
             Renderer.Draw();
 
